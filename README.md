@@ -1,1 +1,0 @@
-# gerickehoeksema.github.io
