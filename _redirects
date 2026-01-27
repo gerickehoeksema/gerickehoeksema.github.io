@@ -1,0 +1,16 @@
+# _redirects - For Netlify hosting
+# Netlify automatically reads this file for redirect rules
+
+# Redirect /medical to /medical.html
+/medical  /medical.html  200
+
+# Optional: Redirect with trailing slash
+/medical/  /medical.html  200
+
+# SPA fallback - redirect all unknown routes to index.html
+# This allows client-side routing to work
+/* /index.html 200
+
+# Force HTTPS (Netlify handles this automatically, but you can enforce it)
+# Uncomment if needed:
+# http://* https://:splat 301!

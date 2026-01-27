@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Prevent search engine indexing -->
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="googlebot" content="noindex, nofollow, noarchive">
+    <meta name="bingbot" content="noindex, nofollow, noarchive">
+    
+    <!-- No caching -->
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    
+    <meta name="description" content="Emergency Medical Information - Private">
+    <title>Emergency Medical Info</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: #0a1628;
+        }
+        .medical-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #152238;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border: 1px solid #1e293b;
+        }
+        .medical-header {
+            text-align: center;
+            color: #ef4444;
+            border-bottom: 3px solid #ef4444;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        .medical-header h1 {
+            color: #e2e8f0;
+            margin-top: 10px;
+        }
+        .emergency-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+        .medical-section {
+            margin-bottom: 25px;
+            background: #0a1628;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+        }
+        .medical-section h3 {
+            color: #60a5fa;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .medical-section p, .medical-section ul {
+            color: #94a3b8;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+        .medical-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .medical-section li {
+            padding: 12px 0;
+            border-bottom: 1px solid #1e293b;
+            color: #e2e8f0;
+        }
+        .medical-section li:last-child {
+            border-bottom: none;
+        }
+        .medical-section li strong {
+            color: #60a5fa;
+            margin-right: 8px;
+        }
+        .important-note {
+            background: #422006;
+            border-left: 4px solid #f59e0b;
+            padding: 18px;
+            margin-top: 25px;
+            border-radius: 8px;
+            color: #fbbf24;
+        }
+        .important-note strong {
+            color: #fbbf24;
+            font-size: 1.05rem;
+        }
+        .last-updated {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 10px;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #1e293b;
+        }
+        .back-link a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+            padding: 10px 20px;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .back-link a:hover {
+            background: rgba(59, 130, 246, 0.2);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        @media print {
+            body {
+                background: white;
+            }
+            .medical-container {
+                box-shadow: none;
+                background: white;
+                color: black;
+            }
+            .medical-section {
+                background: white;
+                border: 1px solid #ccc;
+            }
+            .medical-section h3,
+            .medical-section li,
+            .medical-section p {
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="medical-container">
+        <div class="medical-header">
+            <div class="emergency-badge">⚕️ EMERGENCY MEDICAL INFORMATION</div>
+            <h1>Medical Profile</h1>
+            <p class="last-updated"><strong>Last Updated:</strong> January 2026</p>
+        </div>
+
+        <div class="medical-section">
+            <h3>📋 Personal Information</h3>
+            <ul>
+                <li><strong>Name:</strong> Gericke Hoeksema</li>
+                <li><strong>Date of Birth:</strong> 1988/08/20</li>
+                <li><strong>Blood Type:</strong> O-</li>
+            </ul>
+        </div>
+
+        <div class="medical-section">
+            <h3>📞 Emergency Contacts</h3>
+            <ul>
+                <li><strong>Primary Contact:</strong> Natanye Hoeksema - 084 640 8549</li>
+                <li><strong>Relationship:</strong> Sibling</li>
+                <li><strong>Physician:</strong> Dr. Meyer/Ferreira - 042 293 3339</li>
+            </ul>
+        </div>
+
+        <!-- <div class="medical-section">
+            <h3>💊 Current Medications</h3>
+            <ul>
+                <li><strong>[Medication Name]</strong> - [Dosage] - [Frequency]</li>
+                <li><strong>[Medication Name]</strong> - [Dosage] - [Frequency]</li>
+                <li><em>None currently</em> (if applicable)</li>
+            </ul>
+        </div> -->
+
+        <div class="medical-section">
+            <h3>⚠️ Allergies & Reactions</h3>
+            <ul>
+                <li><strong>Bee string</strong> - Mild</li>
+            </ul>
+        </div>
+
+        <div class="medical-section">
+            <h3>🏥 Medical Conditions</h3>
+            <ul>
+                <li><strong>Asthma</strong></li>
+            </ul>
+        </div>
+
+        <div class="medical-section">
+            <h3>🚑 Emergency Info</h3>
+            <ul>
+                <li><strong>Medical Aid:</strong> Bonitas</li>
+                <li><strong>membership Number:</strong> 24003996496</li>
+            </ul>
+        </div>
+
+        <div class="important-note">
+            <strong>⚠️ Important for Emergency Responders:</strong><br>
+            This information is provided to assist emergency medical personnel. In case of emergency, 
+            please contact emergency services immediately at your local emergency number.
+        </div>
+
+        <div class="back-link">
+            <a href="index.html">← Back to Profile</a>
+        </div>
+    </div>
+</body>
+</html>
