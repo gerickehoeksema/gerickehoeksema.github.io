@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1128 200" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bannerBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="55%" stop-color="#112035"/>
+      <stop offset="100%" stop-color="#1e3a5f"/>
+    </linearGradient>
+    <radialGradient id="glowRight" cx="88%" cy="50%" r="38%">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowLeft" cx="12%" cy="50%" r="25%">
+      <stop offset="0%" stop-color="#1e40af" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#1e40af" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accentLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0"/>
+      <stop offset="20%" stop-color="#3b82f6" stop-opacity="0.9"/>
+      <stop offset="60%" stop-color="#60a5fa" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1128" height="200" fill="url(#bannerBg)"/>
+  <rect width="1128" height="200" fill="url(#glowRight)"/>
+  <rect width="1128" height="200" fill="url(#glowLeft)"/>
+
+  <!-- Network: left cluster -->
+  <line x1="72" y1="58" x2="155" y2="38" stroke="#3b82f6" stroke-width="0.7" opacity="0.22"/>
+  <line x1="72" y1="58" x2="138" y2="118" stroke="#3b82f6" stroke-width="0.7" opacity="0.18"/>
+  <line x1="155" y1="38" x2="215" y2="78" stroke="#3b82f6" stroke-width="0.7" opacity="0.2"/>
+  <line x1="138" y1="118" x2="215" y2="78" stroke="#3b82f6" stroke-width="0.7" opacity="0.17"/>
+  <line x1="58" y1="148" x2="138" y2="118" stroke="#3b82f6" stroke-width="0.7" opacity="0.15"/>
+  <circle cx="72" cy="58" r="3" fill="#3b82f6" opacity="0.6"/>
+  <circle cx="155" cy="38" r="2" fill="#3b82f6" opacity="0.45"/>
+  <circle cx="138" cy="118" r="3" fill="#3b82f6" opacity="0.5"/>
+  <circle cx="215" cy="78" r="2" fill="#60a5fa" opacity="0.42"/>
+  <circle cx="58" cy="148" r="2" fill="#3b82f6" opacity="0.38"/>
+
+  <!-- Network: middle-left cluster -->
+  <line x1="215" y1="78" x2="348" y2="138" stroke="#3b82f6" stroke-width="0.7" opacity="0.12"/>
+  <line x1="348" y1="138" x2="398" y2="48" stroke="#3b82f6" stroke-width="0.7" opacity="0.15"/>
+  <line x1="398" y1="48" x2="478" y2="128" stroke="#3b82f6" stroke-width="0.7" opacity="0.2"/>
+  <line x1="478" y1="128" x2="348" y2="138" stroke="#3b82f6" stroke-width="0.7" opacity="0.17"/>
+  <line x1="478" y1="128" x2="548" y2="68" stroke="#3b82f6" stroke-width="0.7" opacity="0.18"/>
+  <line x1="398" y1="48" x2="498" y2="28" stroke="#3b82f6" stroke-width="0.7" opacity="0.14"/>
+  <line x1="548" y1="68" x2="618" y2="148" stroke="#3b82f6" stroke-width="0.7" opacity="0.18"/>
+  <circle cx="348" cy="138" r="2" fill="#3b82f6" opacity="0.38"/>
+  <circle cx="398" cy="48" r="3" fill="#3b82f6" opacity="0.52"/>
+  <circle cx="478" cy="128" r="4" fill="#3b82f6" opacity="0.6"/>
+  <circle cx="498" cy="28" r="2" fill="#3b82f6" opacity="0.32"/>
+  <circle cx="548" cy="68" r="2" fill="#60a5fa" opacity="0.42"/>
+  <circle cx="618" cy="148" r="2" fill="#3b82f6" opacity="0.4"/>
+
+  <!-- Network: right cluster (denser, brighter) -->
+  <line x1="618" y1="148" x2="728" y2="128" stroke="#3b82f6" stroke-width="0.7" opacity="0.15"/>
+  <line x1="698" y1="68" x2="728" y2="128" stroke="#3b82f6" stroke-width="0.7" opacity="0.16"/>
+  <line x1="698" y1="68" x2="778" y2="43" stroke="#3b82f6" stroke-width="0.7" opacity="0.22"/>
+  <line x1="778" y1="43" x2="848" y2="98" stroke="#3b82f6" stroke-width="0.7" opacity="0.25"/>
+  <line x1="848" y1="98" x2="728" y2="128" stroke="#3b82f6" stroke-width="0.7" opacity="0.2"/>
+  <line x1="848" y1="98" x2="918" y2="53" stroke="#3b82f6" stroke-width="0.7" opacity="0.22"/>
+  <line x1="918" y1="53" x2="998" y2="78" stroke="#3b82f6" stroke-width="0.7" opacity="0.25"/>
+  <line x1="998" y1="78" x2="1058" y2="118" stroke="#3b82f6" stroke-width="0.7" opacity="0.22"/>
+  <line x1="998" y1="78" x2="1078" y2="48" stroke="#3b82f6" stroke-width="0.7" opacity="0.2"/>
+  <line x1="848" y1="98" x2="958" y2="138" stroke="#3b82f6" stroke-width="0.7" opacity="0.18"/>
+  <line x1="1058" y1="118" x2="1078" y2="48" stroke="#3b82f6" stroke-width="0.7" opacity="0.17"/>
+  <circle cx="698" cy="68" r="3" fill="#3b82f6" opacity="0.42"/>
+  <circle cx="728" cy="128" r="2" fill="#3b82f6" opacity="0.36"/>
+  <circle cx="778" cy="43" r="3" fill="#3b82f6" opacity="0.55"/>
+  <circle cx="848" cy="98" r="5" fill="#3b82f6" opacity="0.7"/>
+  <circle cx="918" cy="53" r="3" fill="#60a5fa" opacity="0.52"/>
+  <circle cx="958" cy="138" r="2" fill="#3b82f6" opacity="0.4"/>
+  <circle cx="998" cy="78" r="4" fill="#3b82f6" opacity="0.62"/>
+  <circle cx="1058" cy="118" r="2" fill="#60a5fa" opacity="0.42"/>
+  <circle cx="1078" cy="48" r="3" fill="#3b82f6" opacity="0.48"/>
+
+  <!-- Accent line at bottom -->
+  <rect x="0" y="196" width="1128" height="4" fill="url(#accentLine)"/>
+</svg>

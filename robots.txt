@@ -1,3 +1,14 @@
-# https://www.robotstxt.org/robotstxt.html
+# robots.txt - Controls search engine crawling
+
+# Allow crawling of main site
 User-agent: *
-Disallow:
+Allow: /
+
+# Block medical emergency page from search engines
+# This page is intended for QR code access only
+Disallow: /medical.html
+Disallow: /medical
+Disallow: /medical/
+
+# Sitemap location (optional - create this later)
+# Sitemap: https://yourdomain.com/sitemap.xml

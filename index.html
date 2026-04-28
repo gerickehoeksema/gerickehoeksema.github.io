@@ -1,3 +1,297 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"/><meta name="theme-color" content="#000000"/><link rel="manifest" href="/manifest.json"/><link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet"><link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700" rel="stylesheet"><link rel="stylesheet" href="/css/animate.css"><link rel="stylesheet" href="/css/icomoon.css"><link rel="stylesheet" href="/css/bootstrap.css"><link rel="stylesheet" href="/css/flexslider.css"><link rel="stylesheet" href="/fonts/flaticon/font/flaticon.css"><link rel="stylesheet" href="/css/owl.carousel.min.css"><link rel="stylesheet" href="/css/owl.theme.default.min.css"><link rel="stylesheet" href="/css/style.css"><script src="/js/modernizr-2.6.2.min.js"></script><!--[if lt IE 9]>
-    <script src="js/respond.min.js"></script>
-    <![endif]--><title>Profile - Gericke Hoeksema</title><link href="/static/css/main.70c3f86f.chunk.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div><script src="/js/jquery.min.js"></script><script src="/js/jquery.easing.1.3.js"></script><script src="/js/bootstrap.min.js"></script><script src="/js/jquery.waypoints.min.js"></script><script src="/js/jquery.flexslider-min.js"></script><script src="/js/owl.carousel.min.js"></script><script src="/js/jquery.countTo.js"></script><script src="/js/main.js"></script><script>!function(l){function e(e){for(var r,t,n=e[0],o=e[1],u=e[2],f=0,i=[];f<n.length;f++)t=n[f],p[t]&&i.push(p[t][0]),p[t]=0;for(r in o)Object.prototype.hasOwnProperty.call(o,r)&&(l[r]=o[r]);for(s&&s(e);i.length;)i.shift()();return c.push.apply(c,u||[]),a()}function a(){for(var e,r=0;r<c.length;r++){for(var t=c[r],n=!0,o=1;o<t.length;o++){var u=t[o];0!==p[u]&&(n=!1)}n&&(c.splice(r--,1),e=f(f.s=t[0]))}return e}var t={},p={1:0},c=[];function f(e){if(t[e])return t[e].exports;var r=t[e]={i:e,l:!1,exports:{}};return l[e].call(r.exports,r,r.exports,f),r.l=!0,r.exports}f.m=l,f.c=t,f.d=function(e,r,t){f.o(e,r)||Object.defineProperty(e,r,{enumerable:!0,get:t})},f.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},f.t=function(r,e){if(1&e&&(r=f(r)),8&e)return r;if(4&e&&"object"==typeof r&&r&&r.__esModule)return r;var t=Object.create(null);if(f.r(t),Object.defineProperty(t,"default",{enumerable:!0,value:r}),2&e&&"string"!=typeof r)for(var n in r)f.d(t,n,function(e){return r[e]}.bind(null,n));return t},f.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return f.d(r,"a",r),r},f.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},f.p="/";var r=window.webpackJsonp=window.webpackJsonp||[],n=r.push.bind(r);r.push=e,r=r.slice();for(var o=0;o<r.length;o++)e(r[o]);var s=n;a()}([])</script><script src="/static/js/2.2642a3d9.chunk.js"></script><script src="/static/js/main.084e25ca.chunk.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gericke Hoeksema — Software Architect specialising in Azure cloud, microservices, and .NET">
+    <title>Gericke Hoeksema - Software Architect</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">Gericke Hoeksema</div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#experience" class="nav-link">Experience</a></li>
+                <li><a href="#blog" class="nav-link">Articles</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-banner">
+                    <!-- Replace with your banner image: Add as background-image in inline style or CSS -->
+                    <!-- <img src="images/banner.jpg" alt="Profile Banner" class="banner-image"> -->
+                </div>
+                <div class="profile-container">
+                    <div class="profile-main">
+                        <div class="profile-picture-wrapper">
+                            <img src="images/profile.jpg" alt="Profile Picture" class="profile-picture">
+                            <!-- Fallback placeholder if no image -->
+                            <div class="profile-picture-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="profile-info">
+                            <h1 class="profile-name">Gericke Hoeksema</h1>
+                            <p class="profile-headline">Software Developer & Architect | Azure Cloud Solutions Expert | Microservices Specialist</p>
+                            <p class="profile-location">📍 South Africa</p>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <a href="#contact" class="btn btn-primary">Contact</a>
+                        <a href="https://www.linkedin.com/in/gericke-hoeksema-b132997b" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Card -->
+            <div class="content-card">
+                <h2 class="card-title">About</h2>
+                <div class="card-content">
+                    <p>Experienced Software Architect specializing in designing and implementing scalable, cloud-native solutions on Azure. Passionate about microservices architecture, domain-driven design, and building systems that solve complex business challenges.</p>
+                    <p>I focus on leveraging the right design patterns and architectural principles to create maintainable, performant, and resilient distributed systems.</p>
+                </div>
+            </div>
+
+            <!-- Featured Skills -->
+            <div class="content-card">
+                <h2 class="card-title">Skills & Expertise</h2>
+                <div class="skills-container">
+                    <div class="skill-item">
+                        <div class="skill-icon">💻</div>
+                        <div class="skill-info">
+                            <h3>C# & .NET</h3>
+                            <p>Enterprise application development</p>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">☁️</div>
+                        <div class="skill-info">
+                            <h3>Azure Cloud</h3>
+                            <p>Cloud architecture & solutions</p>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🔧</div>
+                        <div class="skill-info">
+                            <h3>Microservices</h3>
+                            <p>Distributed systems design</p>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">📐</div>
+                        <div class="skill-info">
+                            <h3>Design Patterns</h3>
+                            <p>Architectural best practices</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Page -->
+        <section id="about" class="page">
+            <div class="content-wrapper">
+                <div class="content-card">
+                    <h2 class="card-title">Professional Background</h2>
+                    <div class="card-content">
+                        <p>With extensive experience in enterprise software development, I specialize in architecting solutions that balance technical excellence with business value. My expertise spans across cloud infrastructure, distributed systems, and modern software engineering practices.</p>
+                        
+                        <h3 class="subsection-title">Core Competencies</h3>
+                        <div class="competencies-grid">
+                            <div class="competency-item">
+                                <h4>Cloud Architecture</h4>
+                                <ul>
+                                    <li>Azure Cloud Services (PaaS, IaaS, SaaS)</li>
+                                    <li>Azure Kubernetes Service (AKS)</li>
+                                    <li>Azure Service Bus & Event Grid</li>
+                                    <li>Azure Functions & Logic Apps</li>
+                                </ul>
+                            </div>
+                            <div class="competency-item">
+                                <h4>Software Architecture</h4>
+                                <ul>
+                                    <li>Microservices & Domain-Driven Design</li>
+                                    <li>Event-Driven Architecture</li>
+                                    <li>CQRS & Event Sourcing</li>
+                                    <li>API Design (REST, GraphQL, gRPC)</li>
+                                </ul>
+                            </div>
+                            <div class="competency-item">
+                                <h4>Development</h4>
+                                <ul>
+                                    <li>C# & .NET Core/.NET 6+</li>
+                                    <li>ASP.NET Core Web API</li>
+                                    <li>Entity Framework Core</li>
+                                    <li>SignalR for real-time communication</li>
+                                </ul>
+                            </div>
+                            <div class="competency-item">
+                                <h4>DevOps & Tools</h4>
+                                <ul>
+                                    <li>Azure DevOps & GitHub Actions</li>
+                                    <li>Docker & Kubernetes</li>
+                                    <li>Infrastructure as Code (Terraform, ARM)</li>
+                                    <li>Monitoring & Application Insights</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2 class="card-title">Certifications</h2>
+                    <div class="certifications-list">
+                        <!-- Add your certifications here -->
+                        <div class="cert-item">
+                            <div class="cert-icon">🏆</div>
+                            <div class="cert-info">
+                                <h4>Microsoft Certified: Azure Solutions Architect Expert</h4>
+                                <p>Microsoft • Credential ID: XXXXX</p>
+                            </div>
+                        </div>
+                        <!-- Add more certifications as needed -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Page -->
+        <section id="experience" class="page">
+            <div class="content-wrapper">
+                <div class="content-card">
+                    <h2 class="card-title">Experience</h2>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="experience-header">
+                                    <div>
+                                        <h3>Senior Software Architect</h3>
+                                        <p class="company-name">Company Name</p>
+                                    </div>
+                                    <div class="experience-date">2020 - Present</div>
+                                </div>
+                                <p class="experience-description">
+                                    Leading architecture and design of cloud-native microservices platforms on Azure. 
+                                    Designing and implementing scalable solutions that serve millions of users.
+                                </p>
+                                <ul class="experience-achievements">
+                                    <li>Architected migration of monolithic application to microservices, improving scalability by 300%</li>
+                                    <li>Designed event-driven architecture using Azure Service Bus and Event Grid</li>
+                                    <li>Implemented CQRS pattern for high-performance read/write operations</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="experience-header">
+                                    <div>
+                                        <h3>Software Architect</h3>
+                                        <p class="company-name">Previous Company</p>
+                                    </div>
+                                    <div class="experience-date">2017 - 2020</div>
+                                </div>
+                                <p class="experience-description">
+                                    Designed and developed enterprise applications using C# and Azure cloud services.
+                                </p>
+                                <ul class="experience-achievements">
+                                    <li>Led team of 8 developers in building SaaS platform</li>
+                                    <li>Implemented CI/CD pipelines reducing deployment time by 70%</li>
+                                    <li>Introduced domain-driven design principles to improve code maintainability</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Add more experience items as needed -->
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2 class="card-title">Education</h2>
+                    <div class="education-item">
+                        <h3>Bachelor of Science in Computer Science</h3>
+                        <p class="university-name">University Name</p>
+                        <p class="education-date">Graduated: 2016</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog/Articles Page -->
+        <section id="blog" class="page">
+            <div class="content-wrapper">
+                <div class="content-card">
+                    <h2 class="card-title">Articles & Insights</h2>
+                    <div class="articles-grid">
+                        <!-- Placeholder for articles -->
+                        <div class="article-card">
+                            <div class="article-image-placeholder">
+                                <!-- Add article image: <img src="images/article1.jpg" alt="Article"> -->
+                                <div class="placeholder-content">📝</div>
+                            </div>
+                            <div class="article-content">
+                                <h3>Coming Soon: Technical Articles</h3>
+                                <p class="article-meta">Your insights on Azure, microservices, and architecture</p>
+                                <p>Stay tuned for in-depth articles covering cloud architecture patterns, microservices best practices, and lessons learned from real-world implementations.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Page -->
+        <section id="contact" class="page">
+            <div class="content-wrapper">
+                <div class="content-card">
+                    <h2 class="card-title">Get in Touch</h2>
+                    <div class="contact-grid">
+                        <div class="contact-card">
+                            <div class="contact-icon">📧</div>
+                            <h3>Email</h3>
+                            <p><a href="mailto:gerickehoeksema@gmail.com">gerickehoeksema@gmail.com</a></p>
+                        </div>
+                        <div class="contact-card">
+                            <div class="contact-icon">💼</div>
+                            <h3>LinkedIn</h3>
+                            <p><a href="https://www.linkedin.com/in/gericke-hoeksema-b132997b/" target="_blank" rel="noopener noreferrer">Connect on LinkedIn</a></p>
+                        </div>
+                        <div class="contact-card">
+                            <div class="contact-icon">💻</div>
+                            <h3>GitHub</h3>
+                            <p><a href="https://github.com/gerickehoeksema" target="_blank" rel="noopener noreferrer">View my repositories</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 Gericke Hoeksema. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
