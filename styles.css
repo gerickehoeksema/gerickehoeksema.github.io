@@ -241,6 +241,7 @@ body {
 
 .profile-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 1rem;
 }
@@ -854,6 +855,12 @@ body {
 
     .profile-headline {
         font-size: 0.95rem;
+    }
+
+    .profile-actions .btn {
+        flex: 1 1 calc(50% - 0.75rem);
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
     }
 
     .content-card {
