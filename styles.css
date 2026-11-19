@@ -454,10 +454,18 @@ body {
     border: 1px solid var(--border-light);
     border-radius: 10px;
     transition: all 0.3s ease;
+    color: inherit;
+    text-decoration: none;
 }
 
 .cert-item:hover {
     border-color: var(--primary-blue);
+}
+
+.cv-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }
 
 .cert-icon {
@@ -726,6 +734,53 @@ body {
     color: var(--accent-light);
 }
 
+/* Projects */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+.project-card {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.project-card:hover {
+    border-color: var(--primary-blue);
+    transform: translateY(-3px);
+}
+
+.project-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.project-info h3 {
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.project-info p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.project-link {
+    color: var(--primary-blue);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
 /* Footer */
 .footer {
     background-color: var(--darker-blue);
@@ -808,6 +863,7 @@ body {
     .competencies-grid,
     .skills-container,
     .articles-grid,
+    .projects-grid,
     .contact-grid {
         grid-template-columns: 1fr;
     }
