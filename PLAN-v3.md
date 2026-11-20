@@ -15,7 +15,7 @@ Status: draft for review. Nothing in this plan has been implemented yet.
 | Navigation | Hash-based SPA in `script.js`. | Bugs, see §4.1. |
 | Visual identity | LinkedIn-style dark cards, emoji icons, illustrated banner and avatar. | The illustrated art and the generic corporate cards don't match yet. |
 | Privacy | `medical.html` holds real medical data and is excluded only by `robots.txt` and `noindex`. | The repo is public, so anyone can read that data on GitHub. `noindex` doesn't make it private. |
-| Leftovers | `banner.svg`, `banner.jpg`, `_redirects` (Netlify), `ROUTING_GUIDE.md`, `IMAGES_SETUP.md`, `lets-create-a-plan-optimized-dragon.md`, and a `/medical` handler in `script.js` that never runs on GitHub Pages. | Noise, and it confuses future you about how the site actually works. |
+| Leftovers | `banner.svg`, `banner.jpg`, `_redirects` (Netlify), `.htaccess` (Apache), `ROUTING_GUIDE.md`, `IMAGES_SETUP.md`, `lets-create-a-plan-optimized-dragon.md`, and a `/medical` handler in `script.js` that never runs on GitHub Pages. | Noise, and it confuses future you about how the site actually works. |
 
 ---
 
@@ -116,7 +116,7 @@ A three-way segmented control under the profile header:
 - Fix the inconsistent title: `<title>` says "Software Architect" while the experience section says "Senior Software Developer". Pick one positioning and drive both from `profile.json`.
 
 ### 4.3 Clean up
-Delete `banner.svg`, the old `banner.jpg`, `_redirects`, `ROUTING_GUIDE.md`, `IMAGES_SETUP.md`, and `lets-create-a-plan-optimized-dragon.md`. Fold anything still relevant into the README.
+Delete `banner.svg`, the old `banner.jpg`, `_redirects`, `.htaccess`, `ROUTING_GUIDE.md`, `IMAGES_SETUP.md`, and `lets-create-a-plan-optimized-dragon.md`. Fold anything still relevant into the README.
 
 ---
 
