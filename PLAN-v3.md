@@ -91,9 +91,6 @@ A three-way segmented control under the profile header:
 | **Life** | Cycling (Strava stats), Chess (live rating), Jimny trips (gallery and map), Reading. |
 | **Writing** | Articles for both lenses. Markdown files rendered at build time. Drop the "Coming soon" placeholder until the first article exists. |
 
-### 3.4 Polish
-- Fix the name overlapping the banner on desktop. Either give it a text-shadow / gradient scrim, or move it fully below the banner.
-
 ---
 
 ## 4. Code quality
@@ -171,7 +168,7 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 
 | Phase | Scope | Size |
 |---|---|---|
-| **1. Visual refresh** | Palette tokens, SVG icons, typography, name/banner overlap, light mode. | Small–medium |
+| **1. Visual refresh** | Palette tokens, SVG icons, typography, light mode. | Small–medium |
 | **2. Content as data** | Move content to `content/*.json` and build the C# site builder with visibility rules and tests. Deploy via GitHub Actions. | Medium |
 | **3. The bridge** | Lens switch, Home "Now" card, Life page, merged Work page. | Medium |
 | **4. Integrations** | chess.com, Strava, Goodreads, Jimny trips, EXIF stripping. | Medium |

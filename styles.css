@@ -177,7 +177,8 @@ body {
 }
 
 .profile-info {
-    padding-top: 1rem;
+    /* Clear the 4rem the avatar overlaps the banner, so the name sits below it. */
+    padding-top: 5rem;
 }
 
 .profile-name {
