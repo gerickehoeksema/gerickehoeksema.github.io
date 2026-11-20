@@ -685,55 +685,6 @@ body {
     line-height: 1.6;
 }
 
-/* Contact Grid */
-.contact-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.25rem;
-}
-
-.contact-card {
-    padding: 2rem;
-    background: var(--bg-dark);
-    border: 1px solid var(--border-light);
-    border-radius: 12px;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-.contact-card:hover {
-    border-color: var(--primary-blue);
-    transform: translateY(-3px);
-}
-
-.contact-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.contact-card h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.75rem;
-}
-
-.contact-card p {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-}
-
-.contact-card a {
-    color: var(--primary-blue);
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.contact-card a:hover {
-    color: var(--accent-light);
-}
-
 /* Projects */
 .projects-grid {
     display: grid;
@@ -893,8 +844,7 @@ body {
     .competencies-grid,
     .skills-container,
     .articles-grid,
-    .projects-grid,
-    .contact-grid {
+    .projects-grid {
         grid-template-columns: 1fr;
     }
 
