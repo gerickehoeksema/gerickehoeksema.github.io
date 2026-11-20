@@ -14,7 +14,7 @@ Status: draft for review. Nothing in this plan has been implemented yet.
 | Personal vs. work | Personal life is two sentences in "Intro". Everything else is CV. | The site reads as a CV with a nice banner, not a bridge between the two. |
 | Navigation | Hash-based SPA in `script.js`. | Bugs, see §4.1. |
 | Visual identity | LinkedIn-style dark cards, emoji icons, illustrated banner and avatar. | The illustrated art and the generic corporate cards don't match yet. |
-| Privacy | `medical.html` holds real medical data and is excluded only by `robots.txt` and `noindex`. | The repo is public, so anyone can read that data on GitHub. `noindex` doesn't make it private. |
+| Emergency page | `medical.html` is reached from the QR sticker on the bikes and helmets, so it must stay public. `/medical` only works through a JavaScript redirect in `404.html`. | If that redirect fails, the QR code breaks. The repo is also public, so the source and its git history are readable on GitHub, not just the page. See §4.4. |
 | Leftovers | `banner.svg`, `banner.jpg`, `_redirects` (Netlify), `.htaccess` (Apache), `ROUTING_GUIDE.md`, `IMAGES_SETUP.md`, `lets-create-a-plan-optimized-dragon.md`, and a `/medical` handler in `script.js` that never runs on GitHub Pages. | Noise, and it confuses future you about how the site actually works. |
 
 ---
@@ -115,7 +115,15 @@ A three-way segmented control under the profile header:
 - Add SEO and sharing metadata: Open Graph / Twitter cards (use the banner as `og:image`), a `Person` JSON-LD schema linking LinkedIn, GitHub, Strava, and chess.com, a `sitemap.xml`, and a canonical URL.
 - Fix the inconsistent title: `<title>` says "Software Architect" while the experience section says "Senior Software Developer". Pick one positioning and drive both from `profile.json`.
 
-### 4.3 Clean up
+### 4.3 Emergency page (QR sticker)
+The QR stickers on the bikes and helmets are printed, so **`/medical` is a contract that must never break**, and the page must open instantly for a stranger with no login.
+- **Serve it without JavaScript.** Today `/medical` hits GitHub's 404 and `404.html` redirects it with JavaScript, which returns a 404 status and briefly flashes. Add `medical/index.html` so GitHub Pages serves `/medical` → `/medical/` directly with a 200. Keep `medical.html` for any older links, and drop the 404 redirect once both work.
+- **Make it bulletproof.** Inline its CSS and use no external fonts or scripts, so it loads on a weak rural signal. It should also print cleanly.
+- **Protect it with a test.** Add a build test and a scheduled GitHub Actions check that fails if `/medical` stops returning 200 with the expected content.
+- **Show only what a first responder needs:** name, emergency contacts, blood type, allergies, conditions, medication, and medical aid. Leave out ID numbers and home address.
+- **Keep it out of search** with `noindex`, `robots.txt`, and the sitemap (already done for the first two). It stays reachable by anyone with the URL, and that's intentional.
+
+### 4.4 Clean up
 Delete `banner.svg`, the old `banner.jpg`, `_redirects`, `.htaccess`, `ROUTING_GUIDE.md`, `IMAGES_SETUP.md`, and `lets-create-a-plan-optimized-dragon.md`. Fold anything still relevant into the README.
 
 ---
@@ -154,13 +162,13 @@ build/
 
 ### Option C: Option B deployed to Azure Static Web Apps
 The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead of GitHub Pages:
-- **Private repository support.** Drafts, the medical data, and the CV source no longer sit in a public repo. This is the only option that solves the privacy issue in §1.
-- **Built-in auth and role-based routes** (`staticwebapp.config.json`). A `friends` lens or a protected `/medical` page can sit behind a login, or behind an invite-only role for family.
+- **Private repository support.** Drafts and the CV source no longer sit in a public repo. The medical page stays **publicly served** for the QR code, but its source is no longer browsable on GitHub. The old data stays in the existing git history unless that history is rewritten.
+- **Built-in auth and role-based routes** (`staticwebapp.config.json`). A `friends` lens can sit behind a login or an invite-only role for family. `/medical` is explicitly excluded and always anonymous.
 - An Azure Functions API (C#) for the Strava OAuth token refresh, instead of a build-time secret.
 - Custom domain `gerickehoeksema.co.za` with a free managed certificate.
 - PR preview environments: every PR gets its own URL to review before merging.
 
-**Recommendation:** build **Option B now** on GitHub Pages, keeping the code free of hosting-specific logic, then move to **Option C** once the medical-data and drafts privacy need justifies it. The move is mostly a different deploy step in the workflow.
+**Recommendation:** build **Option B now** on GitHub Pages, keeping the code free of hosting-specific logic, then move to **Option C** once keeping drafts and source private justifies it. The move is mostly a different deploy step in the workflow.
 
 ---
 
@@ -181,12 +189,12 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 
 | Phase | Scope | Size |
 |---|---|---|
-| **0. Hygiene** | Fix the `script.js` bugs (§4.1), delete leftovers, add OG/JSON-LD metadata, responsive images, accessibility fixes. | Small, and it can ship on its own. |
+| **0. Hygiene** | Make `/medical` serve without JavaScript (§4.3), fix the `script.js` bugs (§4.1), delete leftovers, add OG/JSON-LD metadata, responsive images, accessibility fixes. | Small, and it can ship on its own. |
 | **1. Visual refresh** | Palette tokens, SVG icons, typography, name/banner overlap, light mode. | Small–medium |
 | **2. Content as data** | Move content to `content/*.json` and build the C# site builder with visibility rules and tests. Deploy via GitHub Actions. | Medium |
 | **3. The bridge** | Lens switch, Home "Now" card, Life page, merged Work page. | Medium |
 | **4. Integrations** | chess.com, Strava, Goodreads, Jimny trips, EXIF stripping. | Medium |
-| **5. Azure SWA** | Private repo, auth-protected routes (medical, friends), PR previews, Functions for Strava OAuth. | Medium |
+| **5. Azure SWA** | Private repo, auth-protected friends lens (medical stays public), PR previews, Functions for Strava OAuth. | Medium |
 
 ---
 
@@ -194,7 +202,7 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 
 1. **Positioning:** "Software Architect" or "Senior Developer / Tech Lead, working towards architect"? The headline, `<title>`, and meta description should agree.
 2. **Build stack:** the C# builder (Option B, recommended), or Jekyll to stay zero-CI?
-3. **Medical page:** keep it public by URL, put it behind auth (Option C), or keep only a minimal emergency-contact version public?
+3. **Medical page content:** it stays public for the QR code. Should anything currently on it be trimmed (for example ID number or address)?
 4. **Default lens** for first-time visitors: All, or Work?
 5. **Strava detail level:** totals only, or individual rides with maps (start/finish trimmed)?
 6. **Goodreads link:** the button is still `href="#"`. Which URL should it use?
