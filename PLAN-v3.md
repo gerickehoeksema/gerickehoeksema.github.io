@@ -14,7 +14,7 @@ Status: draft for review. Nothing in this plan has been implemented yet.
 | Personal vs. work | Personal life is two sentences in "Intro". Everything else is CV. | The site reads as a CV with a nice banner, not a bridge between the two. |
 | Navigation | Hash-based SPA in `script.js`. | Bugs, see §4.1. |
 | Visual identity | LinkedIn-style dark cards, emoji icons, illustrated banner and avatar. | The illustrated art and the generic corporate cards don't match yet. |
-| Emergency page | `medical.html` is reached from the QR sticker on the bikes and helmets, so it must stay public. `/medical` only works through a JavaScript redirect in `404.html`. | If that redirect fails, the QR code breaks. The repo is also public, so the source and its git history are readable on GitHub, not just the page. See §4.4. |
+| Emergency page | `medical.html` is reached from the QR sticker on the bikes and helmets, so it must stay public. `/medical` only works through a JavaScript redirect in `404.html`. | If that redirect fails, the QR code breaks. The repo is also public, so the source and its git history are readable on GitHub, not just the page. See §4.3. |
 | Leftovers | `banner.svg`, `banner.jpg`, `_redirects` (Netlify), `.htaccess` (Apache), `ROUTING_GUIDE.md`, `IMAGES_SETUP.md`, `lets-create-a-plan-optimized-dragon.md`, and a `/medical` handler in `script.js` that never runs on GitHub Pages. | Noise, and it confuses future you about how the site actually works. |
 
 ---
