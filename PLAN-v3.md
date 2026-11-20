@@ -2,7 +2,7 @@
 
 **Goal:** turn the site into the bridge between Gericke-the-architect and Gericke-the-cyclist / chess player / Jimny explorer, with **full control over what is shown, to whom, and when**.
 
-Status: draft for review. Nothing in this plan has been implemented yet.
+Status: draft for review. Phase 0 (hygiene) is done and has been removed from this plan; everything below is still to do.
 
 ---
 
@@ -12,10 +12,8 @@ Status: draft for review. Nothing in this plan has been implemented yet.
 |---|---|---|
 | Content | Hardcoded in `index.html` (426 lines). | Every change means editing HTML by hand. You can't switch a section off without deleting it. |
 | Personal vs. work | Personal life is two sentences in "Intro". Everything else is CV. | The site reads as a CV with a nice banner, not a bridge between the two. |
-| Navigation | Hash-based SPA in `script.js`. | Bugs, see §4.1. |
 | Visual identity | LinkedIn-style dark cards, emoji icons, illustrated banner and avatar. | The illustrated art and the generic corporate cards don't match yet. |
-| Emergency page | `medical.html` is reached from the QR sticker on the bikes and helmets, so it must stay public. `/medical` only works through a JavaScript redirect in `404.html`. | If that redirect fails, the QR code breaks. The repo is also public, so the source and its git history are readable on GitHub, not just the page. See §4.3. |
-| Leftovers | `banner.svg`, `banner.jpg`, `_redirects` (Netlify), `.htaccess` (Apache), `ROUTING_GUIDE.md`, `IMAGES_SETUP.md`, `lets-create-a-plan-optimized-dragon.md`, and a `/medical` handler in `script.js` that never runs on GitHub Pages. | Noise, and it confuses future you about how the site actually works. |
+| Emergency page | `medical/index.html`, reached from the QR sticker on the bikes and helmets. Served without JavaScript at `/medical`, `/medical/` and `/medical.html`. | Nothing guards that URL against a future change, and the repo is public, so the source and its git history are readable on GitHub. See §4.2. |
 
 ---
 
@@ -95,36 +93,20 @@ A three-way segmented control under the profile header:
 
 ### 3.4 Polish
 - Fix the name overlapping the banner on desktop. Either give it a text-shadow / gradient scrim, or move it fully below the banner.
-- Responsive images: serve WebP/AVIF in a few sizes through `<picture>`. The banner is currently a single 278 KB JPEG.
-- Add a skip link, `aria-current` on the active nav link, visible focus states, and respect `prefers-reduced-motion` (the fade animation ignores it today).
 
 ---
 
 ## 4. Code quality
 
-### 4.1 Bugs in the current `script.js`
-1. **Double handlers.** Nav links get one click listener, and the generic `a[href^="#"]` listener *also* matches them. Each click calls `showPage` twice and pushes two history entries.
-2. **History corruption.** `popstate` calls `showPage`, which calls `pushState` again. Pressing Back pushes a new entry, so Forward stops working.
-3. **`load` also pushes state**, which adds a duplicate history entry on every page load.
-4. **Dead medical handler.** On GitHub Pages, `/medical` is served by `404.html`, never `index.html`, so this code never runs. Delete it.
-5. The fade-in style is injected with JS. It belongs in `styles.css`.
-
-### 4.2 Structure
-- Split the 935-line `styles.css` into layers (`tokens.css`, `base.css`, `components/*.css`, `pages/*.css`) using `@layer`, bundled at build time.
+### 4.1 Structure
+- Split the 946-line `styles.css` into layers (`tokens.css`, `base.css`, `components/*.css`, `pages/*.css`) using `@layer`, bundled at build time.
 - Render components from data: one template per content type (experience item, project card, life card) instead of copy-pasted HTML blocks.
-- Add SEO and sharing metadata: Open Graph / Twitter cards (use the banner as `og:image`), a `Person` JSON-LD schema linking LinkedIn, GitHub, Strava, and chess.com, a `sitemap.xml`, and a canonical URL.
-- Fix the inconsistent title: `<title>` says "Software Architect" while the experience section says "Senior Software Developer". Pick one positioning and drive both from `profile.json`.
+- Fix the inconsistent title: `<title>` says "Software Architect" while the experience section says "Senior Software Developer". Pick one positioning and drive both (plus the Open Graph and JSON-LD job title) from `profile.json`.
 
-### 4.3 Emergency page (QR sticker)
+### 4.2 Emergency page (QR sticker)
 The QR stickers on the bikes and helmets are printed, so **`/medical` is a contract that must never break**, and the page must open instantly for a stranger with no login.
-- **Serve it without JavaScript.** Today `/medical` hits GitHub's 404 and `404.html` redirects it with JavaScript, which returns a 404 status and briefly flashes. Add `medical/index.html` so GitHub Pages serves `/medical` → `/medical/` directly with a 200. Keep `medical.html` for any older links, and drop the 404 redirect once both work.
-- **Make it bulletproof.** Inline its CSS and use no external fonts or scripts, so it loads on a weak rural signal. It should also print cleanly.
-- **Protect it with a test.** Add a build test and a scheduled GitHub Actions check that fails if `/medical` stops returning 200 with the expected content.
+- **Protect it with a test.** Add a build test and a scheduled GitHub Actions check that fails if `/medical`, `/medical/` or `/medical.html` stops returning 200 with the expected content.
 - **Show only what a first responder needs:** name, emergency contacts, blood type, allergies, conditions, medication, and medical aid. Leave out ID numbers and home address.
-- **Keep it out of search** with `noindex`, `robots.txt`, and the sitemap (already done for the first two). It stays reachable by anyone with the URL, and that's intentional.
-
-### 4.4 Clean up
-Delete `banner.svg`, the old `banner.jpg`, `_redirects`, `.htaccess`, `ROUTING_GUIDE.md`, `IMAGES_SETUP.md`, and `lets-create-a-plan-optimized-dragon.md`. Fold anything still relevant into the README.
 
 ---
 
@@ -189,7 +171,6 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 
 | Phase | Scope | Size |
 |---|---|---|
-| **0. Hygiene** | Make `/medical` serve without JavaScript (§4.3), fix the `script.js` bugs (§4.1), delete leftovers, add OG/JSON-LD metadata, responsive images, accessibility fixes. | Small, and it can ship on its own. |
 | **1. Visual refresh** | Palette tokens, SVG icons, typography, name/banner overlap, light mode. | Small–medium |
 | **2. Content as data** | Move content to `content/*.json` and build the C# site builder with visibility rules and tests. Deploy via GitHub Actions. | Medium |
 | **3. The bridge** | Lens switch, Home "Now" card, Life page, merged Work page. | Medium |

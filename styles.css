@@ -135,14 +135,18 @@ body {
 .profile-banner {
     height: 260px;
     background: url('images/banner-adventure.jpg') 70% 85%/cover no-repeat, linear-gradient(135deg, #1e3a5f 0%, #3b82f6 50%, #1e40af 100%);
+    background-image:
+        image-set(url('images/banner-adventure-1792.webp') type('image/webp'), url('images/banner-adventure.jpg') type('image/jpeg')),
+        linear-gradient(135deg, #1e3a5f 0%, #3b82f6 50%, #1e40af 100%);
     position: relative;
 }
 
-.banner-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.9;
+@media (max-width: 900px) {
+    .profile-banner {
+        background-image:
+            image-set(url('images/banner-adventure-900.webp') type('image/webp'), url('images/banner-adventure.jpg') type('image/jpeg')),
+            linear-gradient(135deg, #1e3a5f 0%, #3b82f6 50%, #1e40af 100%);
+    }
 }
 
 .profile-container {
@@ -161,8 +165,8 @@ body {
     position: relative;
 }
 
-.profile-picture,
-.profile-picture-placeholder {
+.profile-picture {
+    display: block;
     width: 152px;
     height: 152px;
     border-radius: 50%;
@@ -170,39 +174,6 @@ body {
     background: var(--bg-dark);
     object-fit: cover;
     box-shadow: var(--shadow-md);
-}
-
-.profile-picture-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%);
-    color: var(--text-primary);
-}
-
-.profile-picture-placeholder svg {
-    width: 80px;
-    height: 80px;
-}
-
-.profile-picture {
-    display: none;
-}
-
-.profile-picture[src$=".jpg"],
-.profile-picture[src$=".jpeg"],
-.profile-picture[src$=".png"],
-.profile-picture[src$=".gif"],
-.profile-picture[src$=".webp"] {
-    display: block;
-}
-
-.profile-picture[src$=".jpg"] + .profile-picture-placeholder,
-.profile-picture[src$=".jpeg"] + .profile-picture-placeholder,
-.profile-picture[src$=".png"] + .profile-picture-placeholder,
-.profile-picture[src$=".gif"] + .profile-picture-placeholder,
-.profile-picture[src$=".webp"] + .profile-picture-placeholder {
-    display: none;
 }
 
 .profile-info {
@@ -871,8 +842,7 @@ body {
         font-size: 0.75rem;
     }
 
-    .profile-picture,
-    .profile-picture-placeholder {
+    .profile-picture {
         width: 120px;
         height: 120px;
     }
@@ -932,4 +902,45 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-blue);
+}
+
+/* Accessibility */
+.skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -3rem;
+    z-index: 2000;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--primary-blue);
+    color: var(--white);
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+    top: 0.75rem;
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+main:focus {
+    outline: none;
 }
