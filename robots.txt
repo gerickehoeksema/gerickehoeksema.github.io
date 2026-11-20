@@ -10,5 +10,4 @@ Disallow: /medical.html
 Disallow: /medical
 Disallow: /medical/
 
-# Sitemap location (optional - create this later)
-# Sitemap: https://yourdomain.com/sitemap.xml
+Sitemap: https://gerickehoeksema.co.za/sitemap.xml
