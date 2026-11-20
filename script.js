@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const activeLink = document.querySelector(`a[href="${pageId}"]`);
         if (activeLink) {
             activeLink.classList.add('active');
+            activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
         }
         
         // Update URL hash without scrolling
