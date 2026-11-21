@@ -173,4 +173,4 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 3. **Medical page content:** it stays public for the QR code. Should anything currently on it be trimmed (for example ID number or address)?
 4. **Default lens** for first-time visitors: All, or Work?
 5. **Strava detail level:** totals only, or individual rides with maps (start/finish trimmed)?
-6. **Goodreads link:** the button is still `href="#"`. Which URL should it use?
+6. ~~**Goodreads link**~~: decided, <https://www.goodreads.com/user/show/149708282-gericke-hoeksema>.
