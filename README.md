@@ -2,44 +2,299 @@
 
 Personal profile site for Gericke Hoeksema, hosted on GitHub Pages at <https://gerickehoeksema.co.za>.
 
-Plain HTML, CSS and JavaScript, plus a small C# site builder that renders content from `content/` (Phase 2 of [`PLAN-v3.md`](PLAN-v3.md), currently a test run: the live site is still served straight from the repository root).
+## How the site works
 
-## Structure
+The site is plain HTML, CSS and JavaScript, plus a small C# **site builder** that renders parts of it from data files in `content/`.
+
+```
+content/*.json, content/articles/*.md ─┐
+                                       ├─▶ build/SiteBuilder ─▶ dist/  (the finished site)
+index.html, styles.css, images/, ... ──┘
+```
+
+- **Hand-written files** (`index.html`, `styles.css`, `script.js`, `medical/`, images, PDFs) are copied into `dist/` as they are.
+- **Content** (Experience, Certifications, Projects, Articles) lives in `content/`. The builder renders it into the marked regions of `index.html` and into one page per article.
+- **Visibility rules** decide what gets published: drafts are never written to `dist/`, scheduled items appear on their date, unlisted items are reachable by link only.
+
+> **Current state: test run.** GitHub Pages still serves the repository root directly, not `dist/`.
+> That works because `index.html` keeps hand-written fallback markup between its build markers.
+> Articles only go live once Pages deploys from the build. See [Deploying with GitHub Actions](#deploying-with-github-actions).
+
+## Repository layout
 
 ```
 index.html            Profile: Home, About, Experience, Projects, Articles (hash-based pages).
-                      <!-- build:name --> regions are filled from content/ by the builder.
+                      <!-- build:name --> ... <!-- /build:name --> regions are filled by the builder.
 styles.css            All styles, in @layers; colour tokens are light-dark() pairs
-script.js             Page switching between the sections in index.html
+script.js             Page switching, theme toggle, "Copy link" on articles
 medical/index.html    Emergency medical page for the QR stickers (self-contained, see below)
 medical.html          Old address; redirects to /medical/ without JavaScript
 404.html              Not-found page, with a /medical safety net
 robots.txt            Keeps /medical out of search engines
-sitemap.xml
-CNAME                 Custom domain for GitHub Pages
-images/
-  banner-adventure.jpg            Banner (JPEG fallback)
-  banner-adventure-{900,1792}.webp
-  profile.jpg                     Avatar (JPEG fallback)
-  profile-{320,600}.webp
-  og-image.jpg                    1200x630 social sharing card
+sitemap.xml           Used only while Pages serves the root; the builder generates its own
+CNAME                 Custom domain (used while Pages serves the root)
+images/               Banner, avatar and share image (JPEG + WebP)
 certifications/       Certificate PDFs
-content/
-  experience.json     Experience timeline
-  certifications.json Certificates (local PDFs in certifications/ must exist, or the build fails)
-  projects.json       Project cards
-  articles/<id>/      One folder per article: index.md (front matter + Markdown) and assets (og.jpg)
+
+content/              Everything the builder renders
+  experience.json       Experience timeline
+  certifications.json   Certificates
+  projects.json         Project cards
+  articles/<id>/        One folder per article: index.md + assets (e.g. og.jpg)
+
 build/
-  SiteBuilder/        .NET 10 console app: content -> dist/
-  SiteBuilder.Tests/  xUnit tests (visibility rules, loader, end-to-end builds)
-.github/workflows/    CI: test + build on every push, dist/ uploaded as an artifact
+  SiteBuilder/          .NET 10 console app: content -> dist/
+  SiteBuilder.Tests/    xUnit tests (visibility rules, loader, end-to-end builds)
+  SiteBuilder.slnx
+
+.github/workflows/build.yml   CI: test + build on every push; dist/ uploaded as an artifact
+global.json                   Runs `dotnet test` on Microsoft Testing Platform (needed for xUnit v3 on .NET 10)
+PLAN-v3.md                    Improvement plan
 ```
+
+## Editing content
+
+| Section | Where to edit |
+|---|---|
+| Experience | `content/experience.json` |
+| Certifications | `content/certifications.json` (+ the PDF in `certifications/`) |
+| Projects | `content/projects.json` |
+| Articles | `content/articles/<id>/index.md` |
+| Profile header, social links, Intro, Skills, About, Education | `index.html` (not moved to content yet) |
+
+After editing, run the tests and a build (see [Building and previewing](#building-and-previewing)). CI does the same on every push.
+
+### Visibility fields
+
+Every item, in JSON or in article front matter, can use the same fields (PLAN-v3 §2):
+
+| Field | Values | Effect |
+|---|---|---|
+| `id` | lowercase, unique per file | Required in JSON. For articles it is the folder name. |
+| `visibility` | `public` (default), `unlisted`, `draft` | Drafts are never written to `dist/`. Unlisted items are built but left out of lists and the sitemap. |
+| `publishFrom` | `yyyy-MM-dd` | Hidden until that date. Needs a rebuild on or after the date (the deploy workflow below rebuilds nightly). |
+| `lens` | `["work"]`, `["life"]`, `["work", "life"]` | Ready for the Work / Life switch (PLAN-v3 §3.1). Defaults to work. |
+| `featured` | `true` / `false` | Reserved for the home page. |
+
+Parsing is strict: an unknown field fails the build, so a typo like `visiblity: draft` can't accidentally publish a draft.
+
+### Examples
+
+**A role** (`content/experience.json`, newest first is automatic; leave out `end` while current):
+
+```json
+{
+  "id": "nml",
+  "role": "Senior Software Developer · Technical & Team Lead",
+  "company": "New media Labs (NML)",
+  "start": "2021-08",
+  "summary": "Technical lead and senior developer ...",
+  "highlights": ["Led the migration from a monolithic application ..."],
+  "lens": ["work"]
+}
+```
+
+**A certificate** (`content/certifications.json`, shown in file order). Write the PDF path as it is on disk; the builder encodes spaces and `#`. A full `https://` link to a verification page also works. A local PDF that doesn't exist fails the build.
+
+```json
+{ "id": "azure-fundamentals", "title": "Microsoft Certified: Azure Fundamentals", "issuer": "Microsoft", "link": "certifications/Azure Fundamentals.pdf" }
+```
+
+**A project** (`content/projects.json`, shown in file order). `icon` is an id from the sprite in `index.html`; `brand` is optional and colours the icon with a `brand-*` class.
+
+```json
+{ "id": "taxyou", "title": "TaxYou", "description": "...", "url": "https://www.taxyou.co.za", "linkText": "Visit project", "icon": "receipt" }
+```
+
+**An article** (`content/articles/<id>/index.md`): YAML front matter, then Markdown. Inline HTML is allowed (the diagram in the first article is inline SVG). `{.class}` on the line before a block adds a CSS class.
+
+```markdown
+---
+title: "Breaking up a monolith: what I'd keep, and what I'd do differently"
+description: "One sentence for search results and share cards."
+lede: "Optional intro paragraph under the title."
+kicker: Architecture
+icon: boxes
+date: 2026-12-01
+lens: [work]
+visibility: draft
+keywords: [microservices, .NET, Azure]
+---
+
+Body in **Markdown**.
+```
+
+Put a 1200×630 `og.jpg` next to `index.md` for the LinkedIn/WhatsApp preview card; without one, the site-wide `images/og-image.jpg` is used.
+
+### Publishing an article
+
+1. Replace every `<mark class="todo">` placeholder. The build refuses to publish an article that still has one.
+2. In the front matter, set `visibility: public` and the real `date` (or `publishFrom` to schedule it).
+3. Preview it (`--preview`, below), then open a PR. CI builds and tests it; the `site` artifact on the run holds the result.
+4. After it is live, paste the URL into LinkedIn's [Post Inspector](https://www.linkedin.com/post-inspector/) so the preview card is fresh.
+
+The draft banner, `noindex`, the article list, reading time and `sitemap.xml` are all handled by the builder.
+
+## Building and previewing
+
+Needs the [.NET 10 SDK](https://dotnet.microsoft.com/download). Run from the repository root:
+
+```bash
+dotnet test --solution build/SiteBuilder.slnx                            # run the tests
+dotnet run --project build/SiteBuilder                                    # build the live site into dist/
+dotnet run --project build/SiteBuilder -- --preview --out dist-preview   # also render drafts and scheduled items
+python3 -m http.server 8000 --directory dist                             # http://localhost:8000
+```
+
+Options: `--root <dir>`, `--out <dir>`, `--today yyyy-MM-dd` (pretend it's another day, to check scheduled items), `--preview`.
+Never deploy a `--preview` build: it contains drafts. `dist/` and `dist-*/` are git-ignored.
+
+### How the builder works
+
+The build is a pipeline of small steps, each one class in `build/SiteBuilder/Pipeline/Steps/`:
+
+| Step | What it does |
+|---|---|
+| `LoadContent` | Reads `content/` into typed records. Strict: unknown fields, bad dates and duplicate ids fail with the file name. |
+| `ApplyVisibility` | Filters content once, using the rules in `build/SiteBuilder/Specifications/` (`NotDraft`, `PublishedBy`, `Unlisted`, `InLens`), composed into a `VisibilityPolicy`. |
+| `PublishGuard` | Fails if a published article still has `<mark class="todo">`. |
+| `CheckLocalLinks` | Fails if a certificate points at a PDF that doesn't exist. |
+| `CopyStaticFiles` | Empties `dist/` and copies the hand-written site, leaving out `content/`, `build/`, `.github/`, Markdown files and the root `sitemap.xml`. |
+| `RenderArticles` | Writes `/articles/<id>/index.html` and copies the article's assets. |
+| `RenderHome` | Fills the `<!-- build:... -->` regions in `dist/index.html`. |
+| `WriteSitemap` | Writes `sitemap.xml` with the home page and every listed article. |
+
+A new step (image optimisation, EXIF stripping, a Strava fetch) is one new class added to `BuildPipeline.Default()`.
+Templates are C# raw strings in `build/SiteBuilder/Rendering/`, so a typo in a template is a compile error.
+
+## Continuous integration
+
+`.github/workflows/build.yml` runs on every push and pull request:
+
+1. `dotnet test`
+2. `dotnet run --project build/SiteBuilder`
+3. A last check that no `class="todo"` reached `dist/`
+4. Uploads `dist/` as the `site` artifact (kept 7 days), so you can download and inspect exactly what would be published.
+
+It does **not** deploy yet.
+
+## Deploying with GitHub Actions
+
+To make the live site come from the builder (and so publish articles), switch GitHub Pages from "serve the branch" to "deploy from a workflow". It takes two changes: one setting, and a deploy job in the workflow.
+
+### 1. Switch the Pages source
+
+1. On GitHub, open the repository's **Settings → Pages**.
+2. Under **Build and deployment → Source**, choose **GitHub Actions** (instead of *Deploy from a branch*).
+3. Leave **Custom domain** as `gerickehoeksema.co.za` and keep **Enforce HTTPS** on. With Actions deployments the custom domain comes from this setting; the `CNAME` file is no longer used (it's harmless to keep).
+
+GitHub creates (or reuses) an environment called **github-pages**. Under **Settings → Environments → github-pages**, check that **Deployment branches** only allows `main`, so a feature branch can never deploy.
+
+> Until step 2 is merged, nothing deploys, and the live site keeps whatever was last published. Do step 1 and merge step 2 close together.
+
+### 2. Add the deploy job
+
+Replace `.github/workflows/build.yml` with:
+
+```yaml
+name: Build and deploy site
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"   # nightly (03:17 UTC), so publishFrom dates go live without a push
+
+permissions:
+  contents: read
+
+# One deployment at a time; a newer run waits instead of cancelling a live deploy.
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Test
+        run: dotnet test --solution build/SiteBuilder.slnx --configuration Release
+
+      - name: Build site
+        run: dotnet run --project build/SiteBuilder --configuration Release
+
+      - name: Check no draft reached dist/
+        run: |
+          if grep -rl 'class="todo"' dist; then
+            echo "::error::Draft placeholders found in dist/"
+            exit 1
+          fi
+
+      - name: Check the emergency page is in the build
+        run: |
+          test -f dist/medical/index.html
+          test -f dist/medical.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  deploy:
+    # Only main deploys; pull requests and other branches just build and test.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to prove the deployment comes from this workflow
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+What changes compared with the current workflow:
+
+- `upload-pages-artifact` packages `dist/` in the format Pages expects (it replaces `upload-artifact`).
+- The `deploy` job runs only for `main`, needs the build and tests to pass, and gets the extra `pages` and `id-token` permissions only for itself.
+- The nightly `schedule` rebuilds `main`, which is what makes `publishFrom` dates appear on time.
+- The extra check fails the deploy if the emergency page is ever missing from the build.
+
+### 3. Check the deployment
+
+After merging to `main`:
+
+1. **Actions** tab: the run shows `build` then `deploy`, with the site URL on the deploy job.
+2. Open <https://gerickehoeksema.co.za> and check the Experience, Certifications and Projects pages.
+3. Check that all three emergency addresses still work: `/medical`, `/medical/` and `/medical.html`.
+4. Check that a made-up address shows the 404 page.
+
+### Rolling back
+
+Set **Settings → Pages → Source** back to **Deploy from a branch** (`main`, `/ (root)`). The site is then served from the repository root again, which still works because `index.html` keeps its fallback markup. That safety net is why the fallback markup should stay until the Actions deployment has been running for a while.
+
+### After the switch (optional clean-up)
+
+Once you're happy with deploying from Actions:
+
+- The fallback markup between the `<!-- build:... -->` markers can be reduced to a short comment, so content only lives in `content/`.
+- The root `sitemap.xml` and `CNAME` can be removed (the builder writes the sitemap; the domain comes from Settings).
 
 ## Emergency medical page
 
 The QR stickers on the bikes and helmets point to this page, so treat its URL as permanent.
 
-- `/medical`, `/medical/` and `/medical.html` all reach it. GitHub Pages serves `medical/index.html` directly, and `medical.html` uses a meta refresh, so neither depends on JavaScript.
+- `/medical`, `/medical/` and `/medical.html` all reach it. `medical/index.html` is served directly, and `medical.html` uses a meta refresh, so neither depends on JavaScript.
+- The builder copies both files into `dist/` unchanged, and the test suite checks that `medical/index.html` is in the build.
 - The page has its styles inlined and loads no external files, so it works on a weak signal.
 - It's marked `noindex` and blocked in `robots.txt`, so search engines skip it. It is still public to anyone with the URL, by design.
 - **This repository is public**, so the page source (and its git history) can be read on GitHub.
@@ -47,49 +302,14 @@ The QR stickers on the bikes and helmets point to this page, so treat its URL as
 
 ## Icons
 
-`index.html` has one inline SVG sprite at the top of `<body>`. Use an icon with:
+`index.html` has one inline SVG sprite at the top of `<body>` (article pages have their own small sprite in `build/SiteBuilder/Rendering/ArticlePage.cs`). Use an icon with:
 
 ```html
 <svg class="icon" aria-hidden="true"><use href="#i-linkedin"/></svg>
 ```
 
 - UI icons come from [Lucide](https://lucide.dev) (ISC). Brand icons come from [Simple Icons](https://simpleicons.org) (CC0); LinkedIn was taken from v9 because later versions dropped it.
-- Brand colours are set per button with a `brand-*` class (`brand-linkedin`, `brand-strava`, ...) in `styles.css`.
-
-## Building the site
-
-Needs the [.NET 10 SDK](https://dotnet.microsoft.com/download).
-
-```bash
-dotnet test --solution build/SiteBuilder.slnx               # run the tests
-dotnet run --project build/SiteBuilder                       # build the live site into dist/
-dotnet run --project build/SiteBuilder -- --preview --out dist-preview   # include drafts, for review only
-cd dist && python3 -m http.server 8000                       # look at it
-```
-
-How it works: `LoadContent -> ApplyVisibility -> PublishGuard -> CheckLocalLinks -> CopyStaticFiles -> RenderArticles -> RenderHome -> WriteSitemap`.
-Each step is one class in `build/SiteBuilder/Pipeline/Steps/`; visibility rules are small specifications in `build/SiteBuilder/Specifications/`.
-
-### Content visibility
-
-Every item has the same fields (see PLAN-v3 §2):
-
-| Field | Values | Effect |
-|---|---|---|
-| `visibility` | `public` (default), `unlisted`, `draft` | Drafts are never written to `dist/`. Unlisted items are built but left out of lists and the sitemap. |
-| `publishFrom` | `yyyy-MM-dd` | Hidden until that date. A nightly rebuild (once deploying from CI) makes it appear. |
-| `lens` | `[work]`, `[life]`, `[work, life]` | Ready for the Work / Life switch. |
-
-Unknown fields are an error, so a typo like `visiblity: draft` fails the build instead of publishing a draft.
-
-## Publishing an article
-
-1. Replace every `<mark class="todo">` in `content/articles/<id>/index.md`. The build refuses to publish an article that still has one.
-2. In the front matter, set `visibility: public` and the real `date`.
-3. Open a PR. CI builds and tests it; download the `site` artifact to check the result.
-4. After it is live, paste the URL into LinkedIn's [Post Inspector](https://www.linkedin.com/post-inspector/) so the preview card is fresh.
-
-The draft banner, `noindex`, the article list and `sitemap.xml` are all handled by the builder.
+- Brand colours are set with a `brand-*` class (`brand-linkedin`, `brand-strava`, ...) in `styles.css`.
 
 ## Updating images
 
@@ -103,11 +323,13 @@ for w in (900, 1792):
       .save(f"images/banner-adventure-{w}.webp", quality=80, method=6)
 ```
 
-## Running locally
+## Running the hand-written site without building
+
+While Pages still serves the root, you can also look at the repository as-is:
 
 ```bash
 python3 -m http.server 8000
 # http://localhost:8000
 ```
 
-Use a local server rather than opening the file directly, so `/medical/` and the absolute links resolve.
+Use a local server rather than opening the file directly, so `/medical/` and the absolute links resolve. This shows the fallback markup, not the content files, and never shows articles.
