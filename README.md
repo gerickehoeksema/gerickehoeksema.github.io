@@ -8,7 +8,7 @@ Plain HTML, CSS and JavaScript with no build step (yet; see [`PLAN-v3.md`](PLAN-
 
 ```
 index.html            Profile: Home, About, Experience, Projects, Articles (hash-based pages)
-styles.css            All styles for the profile
+styles.css            All styles, in @layers; colour tokens are light-dark() pairs
 script.js             Page switching between the sections in index.html
 medical/index.html    Emergency medical page for the QR stickers (self-contained, see below)
 medical.html          Old address; redirects to /medical/ without JavaScript
@@ -34,6 +34,17 @@ The QR stickers on the bikes and helmets point to this page, so treat its URL as
 - It's marked `noindex` and blocked in `robots.txt`, so search engines skip it. It is still public to anyone with the URL, by design.
 - **This repository is public**, so the page source (and its git history) can be read on GitHub.
 - Update the contents in `medical/index.html` only. `medical.html` is just a redirect.
+
+## Icons
+
+`index.html` has one inline SVG sprite at the top of `<body>`. Use an icon with:
+
+```html
+<svg class="icon" aria-hidden="true"><use href="#i-linkedin"/></svg>
+```
+
+- UI icons come from [Lucide](https://lucide.dev) (ISC). Brand icons come from [Simple Icons](https://simpleicons.org) (CC0); LinkedIn was taken from v9 because later versions dropped it.
+- Brand colours are set per button with a `brand-*` class (`brand-linkedin`, `brand-strava`, ...) in `styles.css`.
 
 ## Updating images
 
