@@ -555,7 +555,7 @@
     }
 
     .profile-actions,
-    .cv-actions {
+    .quick-actions {
         display: flex;
         flex-wrap: wrap;
         gap: 0.625rem;
