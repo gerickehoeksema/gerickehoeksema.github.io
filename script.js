@@ -52,3 +52,33 @@ document.addEventListener('DOMContentLoaded', () => {
         history.replaceState(null, '', initial);
     }
 });
+
+// Light / dark theme toggle.
+// The OS preference is the default; a click stores an explicit choice on <html data-theme>
+// and in localStorage. The inline script in <head> re-applies it before first paint.
+document.addEventListener('DOMContentLoaded', () => {
+    const root = document.documentElement;
+    const toggle = document.getElementById('theme-toggle');
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+    if (!toggle) return;
+
+    const current = () => root.dataset.theme || (prefersLight.matches ? 'light' : 'dark');
+
+    function sync() {
+        const next = current() === 'dark' ? 'light' : 'dark';
+        toggle.setAttribute('aria-label', `Switch to ${next} theme`);
+        toggle.title = `Switch to ${next} theme`;
+        const bg = getComputedStyle(document.body).backgroundColor;
+        document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', bg));
+    }
+
+    toggle.addEventListener('click', () => {
+        const next = current() === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try { localStorage.setItem('theme', next); } catch (e) { /* storage blocked: theme lasts for this page view */ }
+        sync();
+    });
+
+    prefersLight.addEventListener('change', sync);
+    sync();
+});

@@ -2,7 +2,7 @@
 
 **Goal:** turn the site into the bridge between Gericke-the-architect and Gericke-the-cyclist / chess player / Jimny explorer, with **full control over what is shown, to whom, and when**.
 
-Status: draft for review. Phase 0 (hygiene) is done and has been removed from this plan; everything below is still to do.
+Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh) are done. Life-card paper texture from §3.1 waits for the Life cards in Phase 3.
 
 ---
 
@@ -12,7 +12,7 @@ Status: draft for review. Phase 0 (hygiene) is done and has been removed from th
 |---|---|---|
 | Content | Hardcoded in `index.html` (426 lines). | Every change means editing HTML by hand. You can't switch a section off without deleting it. |
 | Personal vs. work | Personal life is two sentences in "Intro". Everything else is CV. | The site reads as a CV with a nice banner, not a bridge between the two. |
-| Visual identity | LinkedIn-style dark cards, emoji icons, illustrated banner and avatar. | The illustrated art and the generic corporate cards don't match yet. |
+| Visual identity | Palette taken from the illustrations, SVG icon sprite, display type, light and dark themes. | Life cards (Phase 3) still need their own treatment. |
 | Emergency page | `medical/index.html`, reached from the QR sticker on the bikes and helmets. Served without JavaScript at `/medical`, `/medical/` and `/medical.html`. | Nothing guards that URL against a future change, and the repo is public, so the source and its git history are readable on GitHub. See §4.2. |
 
 ---
@@ -96,7 +96,7 @@ A three-way segmented control under the profile header:
 ## 4. Code quality
 
 ### 4.1 Structure
-- Split the 946-line `styles.css` into layers (`tokens.css`, `base.css`, `components/*.css`, `pages/*.css`) using `@layer`, bundled at build time.
+- `styles.css` is already organised into `@layer reset, tokens, base, layout, components, utilities`. Once the build step exists, split each layer into its own file and bundle at build time.
 - Render components from data: one template per content type (experience item, project card, life card) instead of copy-pasted HTML blocks.
 - Fix the inconsistent title: `<title>` says "Software Architect" while the experience section says "Senior Software Developer". Pick one positioning and drive both (plus the Open Graph and JSON-LD job title) from `profile.json`.
 
@@ -168,7 +168,7 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 
 | Phase | Scope | Size |
 |---|---|---|
-| **1. Visual refresh** | Palette tokens, SVG icons, typography, light mode. | Small–medium |
+| ~~**1. Visual refresh**~~ | Done: palette tokens, SVG icons (Lucide + Simple Icons brand icons), Space Grotesk / Inter, light mode with toggle, `styles.css` reorganised into `@layer`s. | Small–medium |
 | **2. Content as data** | Move content to `content/*.json` and build the C# site builder with visibility rules and tests. Deploy via GitHub Actions. | Medium |
 | **3. The bridge** | Lens switch, Home "Now" card, Life page, merged Work page. | Medium |
 | **4. Integrations** | chess.com, Strava, Goodreads, Jimny trips, EXIF stripping. | Medium |
