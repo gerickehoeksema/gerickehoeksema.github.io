@@ -122,6 +122,8 @@ public sealed class RenderHomeStep : IBuildStep
         var html = File.ReadAllText(path);
         html = Regions.Replace(html, "experience", HomeSections.Experience(context.ListedExperience));
         html = Regions.Replace(html, "articles", HomeSections.ArticleCards(context.ListedArticles));
+        html = Regions.Replace(html, "certifications", HomeSections.Certifications(context.ListedCertifications));
+        html = Regions.Replace(html, "projects", HomeSections.Projects(context.ListedProjects));
         File.WriteAllText(path, html);
     }
 }

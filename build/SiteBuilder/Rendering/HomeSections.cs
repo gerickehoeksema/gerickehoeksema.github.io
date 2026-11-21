@@ -65,6 +65,38 @@ internal static class HomeSections
             """;
     }
 
+    public static string Certifications(IEnumerable<Certification> items) =>
+        string.Join("\n", items.Select(Certification));
+
+    public static string Certification(Certification item) => $"""
+        <a class="cert-item" href="{E(Links.Href(item.Link))}" target="_blank" rel="noopener noreferrer">
+            <div class="tile-icon">{Icon("award")}</div>
+            <div class="cert-info">
+                <h4>{E(item.Title)}</h4>
+                <p>{E(item.Issuer)} · {E(item.LinkText)}</p>
+            </div>
+        </a>
+        """;
+
+    public static string Projects(IEnumerable<Project> items) =>
+        string.Join("\n", items.Select(Project));
+
+    public static string Project(Project item)
+    {
+        var iconClass = item.Brand is null ? "tile-icon" : $"tile-icon brand-{item.Brand}";
+
+        return $"""
+            <a class="project-card" href="{E(Links.Href(item.Url))}" target="_blank" rel="noopener noreferrer">
+                <div class="{E(iconClass)}">{Icon(item.Icon)}</div>
+                <div class="project-info">
+                    <h3>{E(item.Title)}</h3>
+                    <p>{E(item.Description)}</p>
+                    <span class="project-link">{E(item.LinkText)} {Icon("arrow-up-right")}</span>
+                </div>
+            </a>
+            """;
+    }
+
     /// <summary>Shown while nothing is published yet. Keep in sync with the fallback in index.html.</summary>
     public const string EmptyArticles = """
         <div class="article-card">

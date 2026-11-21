@@ -18,7 +18,8 @@ public sealed class LoadContentStep : IBuildStep
             throw new BuildException(ex.Message);
         }
 
-        context.Log($"  {context.Content.Articles.Count} article(s), {context.Content.Experience.Count} role(s)");
+        var c = context.Content;
+        context.Log($"  {c.Articles.Count} article(s), {c.Experience.Count} role(s), {c.Certifications.Count} certification(s), {c.Projects.Count} project(s)");
     }
 }
 
@@ -34,6 +35,8 @@ public sealed class ApplyVisibilityStep : IBuildStep
         context.RenderedArticles = Filter(context.Content.Articles, policy.Rendered);
         context.ListedArticles = Filter(context.Content.Articles, policy.Listed);
         context.ListedExperience = Filter(context.Content.Experience, policy.Listed);
+        context.ListedCertifications = Filter(context.Content.Certifications, policy.Listed);
+        context.ListedProjects = Filter(context.Content.Projects, policy.Listed);
 
         foreach (var skipped in context.Content.Articles.Except(context.RenderedArticles))
         {
@@ -73,6 +76,29 @@ public sealed class PublishGuardStep : IBuildStep
             throw new BuildException(
                 $"Published article(s) still contain draft placeholders (<mark class=\"todo\">): {string.Join(", ", offenders)}. " +
                 "Fill them in, or set visibility back to draft.");
+        }
+    }
+}
+
+/// <summary>
+/// Every certificate that points at a file in the repository must exist, so a renamed PDF
+/// fails the build instead of becoming a broken link.
+/// </summary>
+public sealed class CheckLocalLinksStep : IBuildStep
+{
+    public string Name => "Check local links";
+
+    public void Execute(BuildContext context)
+    {
+        var missing = context.ListedCertifications
+            .Where(c => Rendering.Links.IsLocal(c.Link))
+            .Where(c => !File.Exists(Path.Combine(context.Options.RootDirectory, c.Link)))
+            .Select(c => $"{c.Id} -> {c.Link}")
+            .ToList();
+
+        if (missing.Count > 0)
+        {
+            throw new BuildException($"Certificate file(s) not found: {string.Join("; ", missing)}");
         }
     }
 }

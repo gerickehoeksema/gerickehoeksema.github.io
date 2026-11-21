@@ -26,6 +26,8 @@ images/
 certifications/       Certificate PDFs
 content/
   experience.json     Experience timeline
+  certifications.json Certificates (local PDFs in certifications/ must exist, or the build fails)
+  projects.json       Project cards
   articles/<id>/      One folder per article: index.md (front matter + Markdown) and assets (og.jpg)
 build/
   SiteBuilder/        .NET 10 console app: content -> dist/
@@ -65,7 +67,7 @@ dotnet run --project build/SiteBuilder -- --preview --out dist-preview   # inclu
 cd dist && python3 -m http.server 8000                       # look at it
 ```
 
-How it works: `LoadContent -> ApplyVisibility -> PublishGuard -> CopyStaticFiles -> RenderArticles -> RenderHome -> WriteSitemap`.
+How it works: `LoadContent -> ApplyVisibility -> PublishGuard -> CheckLocalLinks -> CopyStaticFiles -> RenderArticles -> RenderHome -> WriteSitemap`.
 Each step is one class in `build/SiteBuilder/Pipeline/Steps/`; visibility rules are small specifications in `build/SiteBuilder/Specifications/`.
 
 ### Content visibility

@@ -30,7 +30,7 @@ public sealed class BuildContext(BuildOptions options, Action<string> log)
     public Action<string> Log { get; } = log;
 
     /// <summary>Set by <c>LoadContentStep</c>.</summary>
-    public SiteContent Content { get; set; } = new([], []);
+    public SiteContent Content { get; set; } = new();
 
     /// <summary>Set by <c>ApplyVisibilityStep</c>: articles written to the output.</summary>
     public IReadOnlyList<Article> RenderedArticles { get; set; } = [];
@@ -40,6 +40,12 @@ public sealed class BuildContext(BuildOptions options, Action<string> log)
 
     /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>
     public IReadOnlyList<ExperienceItem> ListedExperience { get; set; } = [];
+
+    /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>
+    public IReadOnlyList<Certification> ListedCertifications { get; set; } = [];
+
+    /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>
+    public IReadOnlyList<Project> ListedProjects { get; set; } = [];
 
     public string OutputPath(params string[] parts) => Path.Combine([Options.OutputDirectory, .. parts]);
 }
@@ -63,6 +69,7 @@ public sealed class BuildPipeline(IEnumerable<IBuildStep> steps)
         new Steps.LoadContentStep(),
         new Steps.ApplyVisibilityStep(),
         new Steps.PublishGuardStep(),
+        new Steps.CheckLocalLinksStep(),
         new Steps.CopyStaticFilesStep(),
         new Steps.RenderArticlesStep(),
         new Steps.RenderHomeStep(),

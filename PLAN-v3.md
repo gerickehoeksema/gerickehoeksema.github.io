@@ -2,7 +2,7 @@
 
 **Goal:** turn the site into the bridge between Gericke-the-architect and Gericke-the-cyclist / chess player / Jimny explorer, with **full control over what is shown, to whom, and when**.
 
-Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh: palette, SVG icons, typography, light mode) are done and have been removed from this plan. Phase 2 is in a test run: the C# builder renders Experience and Articles into `dist/` and CI builds it, but GitHub Pages still serves the repository root.
+Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh: palette, SVG icons, typography, light mode) are done and have been removed from this plan. Phase 2 is in a test run: the C# builder renders Experience, Certifications, Projects and Articles into `dist/` and CI builds it, but GitHub Pages still serves the repository root.
 
 ---
 
@@ -10,7 +10,7 @@ Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh: palette
 
 | Area | Current state | Problem |
 |---|---|---|
-| Content | Experience and Articles come from `content/` (Phase 2 test run). Everything else is still hard-coded in `index.html`. | Most changes still mean editing HTML by hand, and those sections can't be switched off without deleting them. |
+| Content | Experience, Certifications, Projects and Articles come from `content/` (Phase 2 test run). The profile header, Intro, Skills, About and Education are still hard-coded in `index.html`. | Most changes still mean editing HTML by hand, and those sections can't be switched off without deleting them. |
 | Personal vs. work | Personal life is two sentences in "Intro". Everything else is CV. | The site reads as a CV with a nice banner, not a bridge between the two. |
 | Emergency page | `medical/index.html`, reached from the QR sticker on the bikes and helmets. Served without JavaScript at `/medical`, `/medical/` and `/medical.html`. | Nothing guards that URL against a future change, and the repo is public, so the source and its git history are readable on GitHub. See §4.2. |
 
@@ -159,7 +159,7 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 
 | Phase | Scope | Size |
 |---|---|---|
-| **2. Content as data** | Test run done: `build/SiteBuilder` (.NET 10) with Specification-based visibility rules, a step pipeline, 41 tests and a CI workflow; Experience and Articles come from `content/`. Remaining: move the other sections to content, then deploy `dist/` with `actions/deploy-pages`. | Medium |
+| **2. Content as data** | Test run done: `build/SiteBuilder` (.NET 10) with Specification-based visibility rules, a step pipeline, 50 tests and a CI workflow; Experience, Certifications, Projects and Articles come from `content/`. Remaining: move the profile header and links, Skills, About and Education to content, then deploy `dist/` with `actions/deploy-pages`. | Medium |
 | **3. The bridge** | Lens switch, Home "Now" card, Life page (with its own card style), merged Work page. | Medium |
 | **4. Integrations** | chess.com, Strava, Goodreads, Jimny trips, EXIF stripping. | Medium |
 | **5. Azure SWA** | Private repo, auth-protected friends lens (medical stays public), PR previews, Functions for Strava OAuth. | Medium |

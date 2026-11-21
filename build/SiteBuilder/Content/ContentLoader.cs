@@ -17,7 +17,7 @@ public sealed class ContentException(string message, Exception? inner = null) : 
 /// Reads <c>content/</c> into typed records:
 /// <list type="bullet">
 /// <item><c>articles/&lt;id&gt;/index.md</c>: YAML front matter + Markdown body.</item>
-/// <item><c>experience.json</c>: an array of roles.</item>
+/// <item><c>experience.json</c>, <c>certifications.json</c>, <c>projects.json</c>: JSON arrays.</item>
 /// </list>
 /// Parsing is strict: an unknown field is an error, so a typo like "visiblity" fails the build
 /// instead of silently publishing a draft.
@@ -54,9 +54,15 @@ public sealed class ContentLoader
             throw new ContentException($"Content folder not found: {contentDirectory}");
         }
 
-        return new SiteContent(
-            LoadArticles(Path.Combine(contentDirectory, "articles")),
-            LoadExperience(Path.Combine(contentDirectory, "experience.json")));
+        return new SiteContent
+        {
+            Articles = LoadArticles(Path.Combine(contentDirectory, "articles")),
+            Experience = LoadJsonList<ExperienceItem>(Path.Combine(contentDirectory, "experience.json"))
+                .OrderByDescending(e => e.Start)
+                .ToList(),
+            Certifications = LoadJsonList<Certification>(Path.Combine(contentDirectory, "certifications.json")),
+            Projects = LoadJsonList<Project>(Path.Combine(contentDirectory, "projects.json")),
+        };
     }
 
     private static IReadOnlyList<Article> LoadArticles(string directory)
@@ -119,7 +125,8 @@ public sealed class ContentLoader
         };
     }
 
-    private static IReadOnlyList<ExperienceItem> LoadExperience(string path)
+    /// <summary>Reads a JSON array of items. A missing file means "none yet".</summary>
+    private static IReadOnlyList<T> LoadJsonList<T>(string path) where T : ContentItem
     {
         if (!File.Exists(path))
         {
@@ -128,10 +135,16 @@ public sealed class ContentLoader
 
         try
         {
-            var items = JsonSerializer.Deserialize<List<ExperienceItem>>(File.ReadAllText(path), Json)
-                ?? throw new ContentException($"{path}: expected a JSON array of roles.");
+            var items = JsonSerializer.Deserialize<List<T>>(File.ReadAllText(path), Json)
+                ?? throw new ContentException($"{path}: expected a JSON array.");
 
-            return items.OrderByDescending(e => e.Start).ToList();
+            var duplicate = items.GroupBy(i => i.Id).FirstOrDefault(g => g.Count() > 1);
+            if (duplicate is not null)
+            {
+                throw new ContentException($"{path}: id \"{duplicate.Key}\" is used more than once.");
+            }
+
+            return items;
         }
         catch (JsonException ex)
         {

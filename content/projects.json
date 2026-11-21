@@ -1,0 +1,19 @@
+[
+  {
+    "id": "taxyou",
+    "title": "TaxYou",
+    "description": "TaxYou started as a single page for tracking my own taxes. I expanded it into an app that helps calculate tax and keep a history of tax information. It is still a work in progress.",
+    "url": "https://www.taxyou.co.za",
+    "linkText": "Visit project",
+    "icon": "receipt"
+  },
+  {
+    "id": "github",
+    "title": "GitHub",
+    "description": "Explore my repositories and projects on GitHub.",
+    "url": "https://github.com/gerickehoeksema",
+    "linkText": "View my repositories",
+    "icon": "github",
+    "brand": "github"
+  }
+]

@@ -72,3 +72,16 @@ internal static partial class Regions
     private static Regex StartMarker(string name) =>
         new($@"<!-- build:{Regex.Escape(name)}(?:\s[^>]*)?-->", RegexOptions.CultureInvariant);
 }
+
+/// <summary>Links in content are written as plain paths; these turn them into safe hrefs.</summary>
+internal static class Links
+{
+    /// <summary>True for a path inside the site, false for an absolute URL (https://, mailto:).</summary>
+    public static bool IsLocal(string link) => !Uri.TryCreate(link, UriKind.Absolute, out _);
+
+    /// <summary>Encodes each segment of a local path ("C#" becomes "C%23"); absolute URLs are left alone.</summary>
+    public static string Href(string link) =>
+        IsLocal(link)
+            ? string.Join('/', link.Split('/').Select(Uri.EscapeDataString))
+            : link;
+}
