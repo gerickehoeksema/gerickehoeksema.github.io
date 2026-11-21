@@ -1,0 +1,26 @@
+[
+  {
+    "id": "c-net",
+    "title": "C# & .NET",
+    "description": "Enterprise application development",
+    "icon": "code"
+  },
+  {
+    "id": "azure-cloud",
+    "title": "Azure Cloud",
+    "description": "Cloud architecture & solutions",
+    "icon": "cloud"
+  },
+  {
+    "id": "microservices",
+    "title": "Microservices",
+    "description": "Distributed systems design",
+    "icon": "boxes"
+  },
+  {
+    "id": "design-patterns",
+    "title": "Design Patterns",
+    "description": "Architectural best practices",
+    "icon": "compass"
+  }
+]

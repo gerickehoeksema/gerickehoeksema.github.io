@@ -1,0 +1,44 @@
+[
+  {
+    "id": "email",
+    "label": "Email",
+    "url": "https://mail.google.com/mail/?view=cm&fs=1&to=gerickehoeksema%40gmail.com",
+    "icon": "mail",
+    "primary": true
+  },
+  {
+    "id": "linkedin",
+    "label": "LinkedIn",
+    "url": "https://www.linkedin.com/in/gericke-hoeksema-b132997b/",
+    "icon": "linkedin",
+    "brand": "linkedin"
+  },
+  {
+    "id": "instagram",
+    "label": "Instagram",
+    "url": "https://www.instagram.com/gerickehoeksema",
+    "icon": "instagram",
+    "brand": "instagram"
+  },
+  {
+    "id": "strava",
+    "label": "Strava",
+    "url": "https://strava.app.link/7mJiKcxbe8b",
+    "icon": "strava",
+    "brand": "strava"
+  },
+  {
+    "id": "chess-com",
+    "label": "chess.com",
+    "url": "https://www.chess.com/member/gerickehoeksema",
+    "icon": "chess",
+    "brand": "chess"
+  },
+  {
+    "id": "goodreads",
+    "label": "Goodreads",
+    "url": "#",
+    "icon": "goodreads",
+    "brand": "goodreads"
+  }
+]

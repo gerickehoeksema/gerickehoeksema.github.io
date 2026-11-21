@@ -1,0 +1,29 @@
+{
+  "name": "Gericke Hoeksema",
+  "givenName": "Gericke",
+  "familyName": "Hoeksema",
+  "jobTitle": "Software Architect",
+  "headline": "Software Developer - Cyclist - Chess player - Xbox gamer - Not yet a surfer",
+  "location": {
+    "locality": "Jeffreys Bay",
+    "country": "South Africa",
+    "countryCode": "ZA"
+  },
+  "description": "Gericke Hoeksema — Software Architect specialising in Azure cloud, microservices, and .NET",
+  "shareDescription": "Software architect in Jeffreys Bay. Azure, microservices and .NET by day; gravel roads, chess and the Jimny the rest of the time.",
+  "image": "images/profile-600.webp",
+  "knowsAbout": [
+    "C#",
+    ".NET",
+    "Microsoft Azure",
+    "Microservices",
+    "Software architecture",
+    "Design patterns"
+  ],
+  "sameAs": [
+    "https://www.linkedin.com/in/gericke-hoeksema-b132997b/",
+    "https://github.com/gerickehoeksema",
+    "https://www.instagram.com/gerickehoeksema",
+    "https://www.chess.com/member/gerickehoeksema"
+  ]
+}

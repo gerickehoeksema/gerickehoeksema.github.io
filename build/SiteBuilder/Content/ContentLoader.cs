@@ -17,7 +17,10 @@ public sealed class ContentException(string message, Exception? inner = null) : 
 /// Reads <c>content/</c> into typed records:
 /// <list type="bullet">
 /// <item><c>articles/&lt;id&gt;/index.md</c>: YAML front matter + Markdown body.</item>
-/// <item><c>experience.json</c>, <c>certifications.json</c>, <c>projects.json</c>: JSON arrays.</item>
+/// <item><c>profile.json</c>: one object (name, job title, metadata).</item>
+/// <item><c>intro.md</c>, <c>about.md</c>: prose sections in Markdown.</item>
+/// <item><c>links.json</c>, <c>skills.json</c>, <c>competencies.json</c>, <c>experience.json</c>,
+/// <c>certifications.json</c>, <c>projects.json</c>, <c>education.json</c>: JSON arrays.</item>
 /// </list>
 /// Parsing is strict: an unknown field is an error, so a typo like "visiblity" fails the build
 /// instead of silently publishing a draft.
@@ -54,14 +57,23 @@ public sealed class ContentLoader
             throw new ContentException($"Content folder not found: {contentDirectory}");
         }
 
+        string In(string name) => Path.Combine(contentDirectory, name);
+
         return new SiteContent
         {
-            Articles = LoadArticles(Path.Combine(contentDirectory, "articles")),
-            Experience = LoadJsonList<ExperienceItem>(Path.Combine(contentDirectory, "experience.json"))
+            Profile = LoadJson<Profile>(In("profile.json")),
+            Links = LoadJsonList<ProfileLink>(In("links.json")),
+            IntroHtml = LoadProse(In("intro.md")),
+            AboutHtml = LoadProse(In("about.md")),
+            Skills = LoadJsonList<Skill>(In("skills.json")),
+            Competencies = LoadJsonList<CompetencyGroup>(In("competencies.json")),
+            Education = LoadJsonList<EducationItem>(In("education.json")),
+            Articles = LoadArticles(In("articles")),
+            Experience = LoadJsonList<ExperienceItem>(In("experience.json"))
                 .OrderByDescending(e => e.Start)
                 .ToList(),
-            Certifications = LoadJsonList<Certification>(Path.Combine(contentDirectory, "certifications.json")),
-            Projects = LoadJsonList<Project>(Path.Combine(contentDirectory, "projects.json")),
+            Certifications = LoadJsonList<Certification>(In("certifications.json")),
+            Projects = LoadJsonList<Project>(In("projects.json")),
         };
     }
 
@@ -123,6 +135,42 @@ public sealed class ContentLoader
             WordCount = CountWords(Markdig.Markdown.ToPlainText(markdown, Markdown)),
             SourceDirectory = Path.GetDirectoryName(path)!,
         };
+    }
+
+    /// <summary>Reads a single JSON object. A missing file returns null.</summary>
+    private static T? LoadJson<T>(string path) where T : class
+    {
+        if (!File.Exists(path))
+        {
+            return null;
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<T>(File.ReadAllText(path), Json)
+                ?? throw new ContentException($"{path}: expected a JSON object.");
+        }
+        catch (JsonException ex)
+        {
+            throw new ContentException($"{path}: {ex.Message}", ex);
+        }
+    }
+
+    /// <summary>Renders a Markdown file of prose (no front matter). A missing file is empty.</summary>
+    private static string LoadProse(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return string.Empty;
+        }
+
+        var markdown = File.ReadAllText(path);
+        if (markdown.TrimStart().StartsWith("---", StringComparison.Ordinal))
+        {
+            throw new ContentException($"{path}: section text has no front matter; remove the --- block.");
+        }
+
+        return Markdig.Markdown.ToHtml(markdown, Markdown).Trim();
     }
 
     /// <summary>Reads a JSON array of items. A missing file means "none yet".</summary>

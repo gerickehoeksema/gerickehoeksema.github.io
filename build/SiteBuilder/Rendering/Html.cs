@@ -79,9 +79,15 @@ internal static class Links
     /// <summary>True for a path inside the site, false for an absolute URL (https://, mailto:).</summary>
     public static bool IsLocal(string link) => !Uri.TryCreate(link, UriKind.Absolute, out _);
 
-    /// <summary>Encodes each segment of a local path ("C#" becomes "C%23"); absolute URLs are left alone.</summary>
+    /// <summary>
+    /// Encodes each segment of a local file path ("C#" becomes "C%23"). Absolute URLs and
+    /// in-page anchors ("#", "#about") are left alone.
+    /// </summary>
     public static string Href(string link) =>
-        IsLocal(link)
+        IsLocal(link) && !link.StartsWith('#')
             ? string.Join('/', link.Split('/').Select(Uri.EscapeDataString))
             : link;
+
+    /// <summary>External links open in a new tab; in-page and site links don't.</summary>
+    public static bool OpensInNewTab(string link) => !IsLocal(link);
 }
