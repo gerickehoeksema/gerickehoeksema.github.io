@@ -561,6 +561,11 @@
         gap: 0.625rem;
     }
 
+    /* Quick actions inside a card sit between the title and the content */
+    .card-title + .quick-actions {
+        margin-bottom: 1.25rem;
+    }
+
     .profile-actions {
         margin-top: 1.25rem;
     }
