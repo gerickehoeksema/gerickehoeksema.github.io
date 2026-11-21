@@ -63,29 +63,12 @@ public class ContentLoaderTests
     }
 
     [Fact]
-    public void Experience_json_is_strict_about_field_names()
+    public void Content_json_is_strict_about_field_names()
     {
-        using var site = new TestSite().WithExperience("""[{ "id": "a", "role": "R", "company": "C", "start": "2020-01", "summary": "S", "visiblity": "draft" }]""");
+        using var site = new TestSite().WithJson("projects.json", """[{ "id": "a", "title": "T", "description": "D", "url": "https://example.com", "visiblity": "draft" }]""");
 
         var ex = Assert.Throws<ContentException>(() => new ContentLoader().Load(Path.Combine(site.Root, "content")));
         Assert.Contains("visiblity", ex.Message);
-    }
-
-    [Fact]
-    public void Experience_is_sorted_newest_first_and_formats_dates()
-    {
-        using var site = new TestSite().WithExperience("""
-            [
-              { "id": "old", "role": "R1", "company": "C1", "start": "2015-11", "end": "2018-01", "summary": "S" },
-              { "id": "now", "role": "R2", "company": "C2", "start": "2021-08", "summary": "S", "lens": ["work"] }
-            ]
-            """);
-
-        var roles = new ContentLoader().Load(Path.Combine(site.Root, "content")).Experience;
-
-        Assert.Equal(["now", "old"], roles.Select(r => r.Id));
-        Assert.Equal("Aug 2021 – Present", HomeSections.DateRange(roles[0]));
-        Assert.Equal("Nov 2015 – Jan 2018", HomeSections.DateRange(roles[1]));
     }
 
     [Fact]
@@ -95,7 +78,7 @@ public class ContentLoaderTests
 
         var content = new ContentLoader().Load(Path.Combine(root, "content"));
 
-        Assert.NotEmpty(content.Experience);
+        Assert.NotEmpty(content.Skills);
         Assert.All(content.Articles, a => Assert.False(string.IsNullOrWhiteSpace(a.BodyHtml)));
     }
 

@@ -20,7 +20,7 @@ public sealed class LoadContentStep : IBuildStep
 
         var c = context.Content;
         context.Log($"  profile: {(c.Profile is null ? "missing" : c.Profile.Name)}, {c.Links.Count} link(s), {c.Skills.Count} skill(s), " +
-                    $"{c.Competencies.Count} competency group(s), {c.Experience.Count} role(s), {c.Certifications.Count} certification(s), " +
+                    $"{c.Competencies.Count} competency group(s), {c.Certifications.Count} certification(s), " +
                     $"{c.Projects.Count} project(s), {c.Education.Count} education item(s), {c.Articles.Count} article(s)");
     }
 }
@@ -40,7 +40,6 @@ public sealed class ApplyVisibilityStep : IBuildStep
         context.ListedSkills = Filter(context.Content.Skills, policy.Listed);
         context.ListedCompetencies = Filter(context.Content.Competencies, policy.Listed);
         context.ListedEducation = Filter(context.Content.Education, policy.Listed);
-        context.ListedExperience = Filter(context.Content.Experience, policy.Listed);
         context.ListedCertifications = Filter(context.Content.Certifications, policy.Listed);
         context.ListedProjects = Filter(context.Content.Projects, policy.Listed);
 

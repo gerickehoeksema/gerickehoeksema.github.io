@@ -7,13 +7,12 @@ public class VisibilityTests
 {
     private static readonly DateOnly Today = new(2026, 11, 21);
 
-    private static ExperienceItem Item(Visibility visibility = Visibility.Public, DateOnly? publishFrom = null, params Lens[] lenses) => new()
+    private static Project Item(Visibility visibility = Visibility.Public, DateOnly? publishFrom = null, params Lens[] lenses) => new()
     {
         Id = "x",
-        Role = "Role",
-        Company = "Company",
-        Start = new YearMonth(2020, 1),
-        Summary = "Summary",
+        Title = "Title",
+        Description = "Description",
+        Url = "https://example.com",
         Visibility = visibility,
         PublishFrom = publishFrom,
         Lenses = lenses.Length == 0 ? [Lens.Work] : lenses,

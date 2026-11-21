@@ -38,11 +38,6 @@ internal sealed class TestSite : IDisposable
             <footer>
                 <!-- build:copyright --><p>fallback copyright</p><!-- /build:copyright -->
             </footer>
-            <div class="timeline">
-                <!-- build:experience · generated -->
-                <p>fallback experience</p>
-                <!-- /build:experience -->
-            </div>
             <div class="certifications-list">
                 <!-- build:certifications -->
                 <p>fallback certifications</p>
@@ -106,8 +101,6 @@ internal sealed class TestSite : IDisposable
         visibility: {visibility}
         {(publishFrom is null ? "" : $"publishFrom: {publishFrom}")}
         """;
-
-    public TestSite WithExperience(string json) => WithJson("experience.json", json);
 
     public TestSite WithJson(string fileName, string json)
     {

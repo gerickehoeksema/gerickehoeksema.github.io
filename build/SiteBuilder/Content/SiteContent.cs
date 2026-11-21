@@ -18,8 +18,6 @@ public sealed record SiteContent
 
     public IReadOnlyList<CompetencyGroup> Competencies { get; init; } = [];
 
-    public IReadOnlyList<ExperienceItem> Experience { get; init; } = [];
-
     public IReadOnlyList<Certification> Certifications { get; init; } = [];
 
     public IReadOnlyList<Project> Projects { get; init; } = [];

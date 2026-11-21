@@ -13,7 +13,7 @@ index.html, styles.css, images/, ... ──┘
 ```
 
 - **Hand-written files** (`index.html`, `styles.css`, `script.js`, `medical/`, images, PDFs) are copied into `dist/` as they are.
-- **Content** (profile and page metadata, links, Intro, Skills, About, Competencies, Experience, Certifications, Projects, Education, Articles) lives in `content/`. The builder renders it into the marked regions of `index.html` and into one page per article. `index.html` is now the layout: navigation, images, the icon sprite and the order of the sections.
+- **Content** (profile and page metadata, links, Intro, Skills, About, Competencies, Certifications, Projects, Education, Articles) lives in `content/`. The builder renders it into the marked regions of `index.html` and into one page per article. `index.html` is now the layout: navigation, images, the icon sprite and the order of the sections.
 - **Visibility rules** decide what gets published: drafts are never written to `dist/`, scheduled items appear on their date, unlisted items are reachable by link only.
 
 Every push to `main` is tested, built and deployed to GitHub Pages by GitHub Actions, and `main` is rebuilt nightly. See [Deploying with GitHub Actions](#deploying-with-github-actions).
@@ -39,10 +39,9 @@ content/              Everything the builder renders (prose in Markdown, lists i
   profile.json          Name, job title, headline, location; drives <title>, description, share card, JSON-LD
   links.json            Buttons under the profile header (Email, LinkedIn, ...)
   intro.md              Home page Intro
-  skills.json           Home page Skills & Expertise tiles
+  skills.json           Experience page Skills & Expertise tiles
   about.md              About page Professional Background text
   competencies.json     About page Core Competencies groups
-  experience.json       Experience timeline
   certifications.json   Certificates
   projects.json         Project cards
   education.json        Education
@@ -63,15 +62,14 @@ PLAN-v3.md                    Improvement plan
 | Section | Where to edit |
 |---|---|
 | Name, job title, headline, location; page title, search description, share card, JSON-LD | `content/profile.json` |
-| Buttons under the header (Email, LinkedIn, Instagram, Strava, chess.com, Goodreads) | `content/links.json` |
+| Buttons under the header (Email, LinkedIn, GitHub, Instagram, Strava, chess.com, Goodreads) | `content/links.json` |
 | Intro (Home) | `content/intro.md` |
-| Skills & Expertise (Home) | `content/skills.json` |
+| Skills & Expertise (Experience page) | `content/skills.json` |
 | Professional Background (About) | `content/about.md` |
 | Core Competencies (About) | `content/competencies.json` |
-| Experience | `content/experience.json` |
 | Certifications | `content/certifications.json` (+ the PDF in `certifications/`) |
 | Education | `content/education.json` |
-| Projects | `content/projects.json` |
+| Projects (finished projects only; profiles such as GitHub go in `links.json`) | `content/projects.json` |
 | Articles | `content/articles/<id>/index.md` |
 | Footer year | Automatic: the year of the build |
 | Layout, navigation, images, banner and avatar alt text, icon sprite | `index.html` |
@@ -321,7 +319,7 @@ What it does:
 After merging to `main`:
 
 1. **Actions** tab: the run shows `build` then `deploy`, with the site URL on the deploy job.
-2. Open <https://gerickehoeksema.co.za> and check the Experience, Certifications and Projects pages.
+2. Open <https://gerickehoeksema.co.za> and check the Experience (Skills, Certifications, Education) and Projects pages.
 3. Check that all three emergency addresses still work: `/medical`, `/medical/` and `/medical.html`.
 4. Check that a made-up address shows the 404 page.
 
