@@ -51,9 +51,6 @@ public sealed class BuildContext(BuildOptions options, Action<string> log)
     public IReadOnlyList<EducationItem> ListedEducation { get; set; } = [];
 
     /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>
-    public IReadOnlyList<ExperienceItem> ListedExperience { get; set; } = [];
-
-    /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>
     public IReadOnlyList<Certification> ListedCertifications { get; set; } = [];
 
     /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>

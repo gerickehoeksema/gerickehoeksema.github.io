@@ -99,26 +99,6 @@ public class PipelineTests
     }
 
     [Fact]
-    public void Experience_is_rendered_from_json()
-    {
-        using var site = new TestSite().WithExperience("""
-            [
-              { "id": "a", "role": "Lead & Architect", "company": "Acme", "start": "2021-08", "summary": "Did things.", "highlights": ["Shipped it."] },
-              { "id": "b", "role": "Hidden role", "company": "Nope", "start": "2010-01", "end": "2011-01", "summary": "S", "visibility": "draft" }
-            ]
-            """);
-
-        site.Build();
-
-        var html = site.Read("index.html");
-        Assert.Contains("<h3>Lead &amp; Architect</h3>", html);
-        Assert.Contains("Aug 2021 – Present", html);
-        Assert.Contains("<li>Shipped it.</li>", html);
-        Assert.DoesNotContain("Hidden role", html);
-        Assert.DoesNotContain("fallback experience", html);
-    }
-
-    [Fact]
     public void Source_only_files_are_not_copied()
     {
         using var site = new TestSite();
@@ -155,7 +135,7 @@ public class PipelineTests
     public void A_missing_region_fails_with_a_clear_message()
     {
         using var site = new TestSite();
-        File.WriteAllText(Path.Combine(site.Root, "index.html"), "<html><!-- build:experience --><!-- /build:experience --></html>");
+        File.WriteAllText(Path.Combine(site.Root, "index.html"), "<html><!-- build:projects --><!-- /build:projects --></html>");
 
         var ex = Assert.Throws<BuildException>(() => site.Build());
 

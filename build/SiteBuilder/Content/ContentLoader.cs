@@ -46,7 +46,6 @@ public sealed class ContentLoader
         Converters =
         {
             new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: false),
-            new YearMonthJsonConverter(),
         },
     };
 
@@ -69,9 +68,6 @@ public sealed class ContentLoader
             Competencies = LoadJsonList<CompetencyGroup>(In("competencies.json")),
             Education = LoadJsonList<EducationItem>(In("education.json")),
             Articles = LoadArticles(In("articles")),
-            Experience = LoadJsonList<ExperienceItem>(In("experience.json"))
-                .OrderByDescending(e => e.Start)
-                .ToList(),
             Certifications = LoadJsonList<Certification>(In("certifications.json")),
             Projects = LoadJsonList<Project>(In("projects.json")),
         };
@@ -235,21 +231,4 @@ public sealed class ContentLoader
         public bool? Featured { get; set; }
     }
 
-    private sealed class YearMonthJsonConverter : JsonConverter<YearMonth>
-    {
-        public override YearMonth Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            try
-            {
-                return YearMonth.Parse(reader.GetString() ?? string.Empty);
-            }
-            catch (FormatException ex)
-            {
-                throw new JsonException(ex.Message, ex);
-            }
-        }
-
-        public override void Write(Utf8JsonWriter writer, YearMonth value, JsonSerializerOptions options) =>
-            writer.WriteStringValue(value.ToString());
-    }
 }

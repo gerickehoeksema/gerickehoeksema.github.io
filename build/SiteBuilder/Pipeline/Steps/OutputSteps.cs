@@ -134,7 +134,6 @@ public sealed class RenderHomeStep : IBuildStep
         html = Regions.Replace(html, "competencies", ProfileSections.Competencies(context.ListedCompetencies));
         html = Regions.Replace(html, "education", ProfileSections.Education(context.ListedEducation));
         html = Regions.Replace(html, "copyright", ProfileSections.Copyright(profile, context.Options.Today));
-        html = Regions.Replace(html, "experience", HomeSections.Experience(context.ListedExperience));
         html = Regions.Replace(html, "articles", HomeSections.ArticleCards(context.ListedArticles));
         html = Regions.Replace(html, "certifications", HomeSections.Certifications(context.ListedCertifications));
         html = Regions.Replace(html, "projects", HomeSections.Projects(context.ListedProjects));

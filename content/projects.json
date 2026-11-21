@@ -6,14 +6,5 @@
     "url": "https://www.taxyou.co.za",
     "linkText": "Visit project",
     "icon": "receipt"
-  },
-  {
-    "id": "github",
-    "title": "GitHub",
-    "description": "Explore my repositories and projects on GitHub.",
-    "url": "https://github.com/gerickehoeksema",
-    "linkText": "View my repositories",
-    "icon": "github",
-    "brand": "github"
   }
 ]
