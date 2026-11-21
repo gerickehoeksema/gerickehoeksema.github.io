@@ -1,0 +1,63 @@
+name: Build and deploy site
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"   # nightly (03:17 UTC), so publishFrom dates go live without a push
+
+permissions:
+  contents: read
+
+# One deployment at a time; a newer run waits instead of cancelling a live deploy.
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Test
+        run: dotnet test --solution build/SiteBuilder.slnx --configuration Release
+
+      - name: Build site
+        run: dotnet run --project build/SiteBuilder --configuration Release
+
+      - name: Check no draft reached dist/
+        run: |
+          if grep -rl 'class="todo"' dist; then
+            echo "::error::Draft placeholders found in dist/"
+            exit 1
+          fi
+
+      - name: Check the emergency page is in the build
+        run: |
+          test -f dist/medical/index.html
+          test -f dist/medical.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  deploy:
+    # Only main deploys; pull requests and other branches just build and test.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to prove the deployment comes from this workflow
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

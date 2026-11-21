@@ -2,7 +2,7 @@
 
 **Goal:** turn the site into the bridge between Gericke-the-architect and Gericke-the-cyclist / chess player / Jimny explorer, with **full control over what is shown, to whom, and when**.
 
-Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh) are done. Life-card paper texture from §3.1 waits for the Life cards in Phase 3.
+Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh: palette, SVG icons, typography, light mode) are done and have been removed from this plan. Phase 2 is in a test run: the C# builder renders Experience, Certifications, Projects and Articles into `dist/` and CI builds it, but GitHub Pages still serves the repository root.
 
 ---
 
@@ -10,9 +10,8 @@ Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh) are don
 
 | Area | Current state | Problem |
 |---|---|---|
-| Content | Hardcoded in `index.html` (426 lines). | Every change means editing HTML by hand. You can't switch a section off without deleting it. |
+| Content | Experience, Certifications, Projects and Articles come from `content/` (Phase 2 test run). The profile header, Intro, Skills, About and Education are still hard-coded in `index.html`. | Most changes still mean editing HTML by hand, and those sections can't be switched off without deleting them. |
 | Personal vs. work | Personal life is two sentences in "Intro". Everything else is CV. | The site reads as a CV with a nice banner, not a bridge between the two. |
-| Visual identity | Palette taken from the illustrations, SVG icon sprite, display type, light and dark themes. | Life cards (Phase 3) still need their own treatment. |
 | Emergency page | `medical/index.html`, reached from the QR sticker on the bikes and helmets. Served without JavaScript at `/medical`, `/medical/` and `/medical.html`. | Nothing guards that URL against a future change, and the repo is public, so the source and its git history are readable on GitHub. See §4.2. |
 
 ---
@@ -48,7 +47,7 @@ Every item gets the same small visibility contract. You'll know this as a specif
 }
 ```
 
-- **`lens`:** which side of you an item belongs to. It drives the "Work / Life / All" toggle (§3.2).
+- **`lens`:** which side of you an item belongs to. It drives the "Work / Life / All" toggle (§3.1).
 - **`visibility`:**
   - `public` is rendered and listed.
   - `unlisted` is rendered only via a direct link, never in lists.
@@ -59,17 +58,9 @@ Every item gets the same small visibility contract. You'll know this as a specif
 
 ---
 
-## 3. Visual direction
+## 3. Site structure
 
-### 3.1 Art direction: lean into the illustration
-The new banner and avatar give the site a strong, warm, comic-illustration identity. Make the rest of the UI match:
-- **Palette from the art:** sunset amber (`#F2A541`), sky blue (`#3B82C4`), pine green (`#2F5D3A`), and dusty trail beige (`#E9D8B4`) as accents on the existing dark base. Define them as CSS custom properties.
-- **Replace emoji icons** (💻 ☁️ 🔧 🏆 📝) with one consistent inline-SVG icon set, for example Lucide. Emoji render differently on every OS and look off-brand.
-- **Typography:** one display face with some character for headings (for example *Space Grotesk*) and keep *Inter* for body text.
-- **Cards:** softer, warmer borders and a subtle paper texture on life cards, so work and life are visually distinct but clearly the same site.
-- **Light mode:** add a `prefers-color-scheme` light theme plus a manual toggle that remembers the choice.
-
-### 3.2 The "lens" switch (the bridge)
+### 3.1 The "lens" switch (the bridge)
 A three-way segmented control under the profile header:
 
 ```
@@ -82,14 +73,14 @@ A three-way segmented control under the profile header:
 - The headline and the banner change with the lens. The work lens can use a cleaner crop, the life lens the full adventure scene.
 - The lens is kept in the URL (`/?lens=work`), so you can send a recruiter a link that opens straight in work mode.
 
-### 3.3 Page structure
+### 3.2 Page structure
 
 | Page | Content |
 |---|---|
 | **Home** | Header, lens switch, "Now" card (what I'm working on / riding / reading this month), featured items. |
 | **Work** | Merge today's About + Experience + Projects + Certifications into one well-structured page, with an architecture-focused "How I design systems" section (patterns, ADRs, Azure reference diagrams). |
-| **Life** | Cycling (Strava stats), Chess (live rating), Jimny trips (gallery and map), Reading. |
-| **Writing** | Articles for both lenses. Markdown files rendered at build time. Drop the "Coming soon" placeholder until the first article exists. |
+| **Life** | Cycling (Strava stats), Chess (live rating), Jimny trips (gallery and map), Reading. Life cards get their own look (warmer borders, a subtle paper texture) so work and life are distinct but clearly the same site. |
+| **Writing** | Articles for both lenses. Markdown files rendered at build time. The first article is drafted in `content/articles/`. |
 
 ---
 
@@ -117,7 +108,7 @@ All three options give build-time filtering. Pick based on how much you want to 
 - Downside: Ruby/Liquid, which is not your stack, and its logic is limited.
 
 ### Option B: a small C# static-site builder (recommended)
-A `.NET 9` console app in `/build` that you fully own:
+A `.NET 10` (LTS) console app in `/build` that you fully own:
 
 ```
 build/
@@ -125,7 +116,7 @@ build/
   Content/ContentLoader.cs      // reads content/*.json + markdown
   Content/IVisibilityRule.cs    // Specification pattern
     PublishedRule, NotDraftRule, ScheduledRule, LensRule
-  Rendering/RazorRenderer.cs    // RazorLight templates per component
+  Rendering/*.cs                // C# raw-string templates per component (compile-time checked; RazorLight optional later)
   Pipeline/IBuildStep.cs        // Pipeline / Chain of Responsibility
     LoadContent -> ApplyVisibility -> FetchIntegrations -> Render -> OptimiseImages -> Write
   Integrations/
@@ -168,9 +159,8 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 
 | Phase | Scope | Size |
 |---|---|---|
-| ~~**1. Visual refresh**~~ | Done: palette tokens, SVG icons (Lucide + Simple Icons brand icons), Space Grotesk / Inter, light mode with toggle, `styles.css` reorganised into `@layer`s. | Small–medium |
-| **2. Content as data** | Move content to `content/*.json` and build the C# site builder with visibility rules and tests. Deploy via GitHub Actions. | Medium |
-| **3. The bridge** | Lens switch, Home "Now" card, Life page, merged Work page. | Medium |
+| **2. Content as data** | Test run done: `build/SiteBuilder` (.NET 10) with Specification-based visibility rules, a step pipeline, 50 tests and a CI workflow; Experience, Certifications, Projects and Articles come from `content/`. Remaining: move the profile header and links, Skills, About and Education to content, then deploy `dist/` with `actions/deploy-pages`. | Medium |
+| **3. The bridge** | Lens switch, Home "Now" card, Life page (with its own card style), merged Work page. | Medium |
 | **4. Integrations** | chess.com, Strava, Goodreads, Jimny trips, EXIF stripping. | Medium |
 | **5. Azure SWA** | Private repo, auth-protected friends lens (medical stays public), PR previews, Functions for Strava OAuth. | Medium |
 
@@ -179,7 +169,7 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 ## 8. Decisions for you
 
 1. **Positioning:** "Software Architect" or "Senior Developer / Tech Lead, working towards architect"? The headline, `<title>`, and meta description should agree.
-2. **Build stack:** the C# builder (Option B, recommended), or Jekyll to stay zero-CI?
+2. ~~**Build stack**~~: decided, the C# builder (Option B) on GitHub Pages.
 3. **Medical page content:** it stays public for the QR code. Should anything currently on it be trimmed (for example ID number or address)?
 4. **Default lens** for first-time visitors: All, or Work?
 5. **Strava detail level:** totals only, or individual rides with maps (start/finish trimmed)?

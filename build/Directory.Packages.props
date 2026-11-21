@@ -1,0 +1,7 @@
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="Markdig" Version="1.5.1" />
+    <PackageVersion Include="YamlDotNet" Version="18.0.0" />
+    <PackageVersion Include="xunit.v3" Version="4.0.2" />
+  </ItemGroup>
+</Project>

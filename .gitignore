@@ -1,0 +1,7 @@
+# Build output
+dist/
+dist-*/
+bin/
+obj/
+*.user
+.vs/

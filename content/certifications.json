@@ -1,0 +1,26 @@
+[
+  {
+    "id": "azure-cosmos-db-developer",
+    "title": "Microsoft Certified: Azure Cosmos DB Developer Specialty",
+    "issuer": "Microsoft",
+    "link": "certifications/Azure Cosmos DB Developer Speciality.pdf"
+  },
+  {
+    "id": "azure-fundamentals",
+    "title": "Microsoft Certified: Azure Fundamentals",
+    "issuer": "Microsoft",
+    "link": "certifications/Azure Fundamentals.pdf"
+  },
+  {
+    "id": "microsoft-certified-professional",
+    "title": "Microsoft Certified Professional",
+    "issuer": "Microsoft",
+    "link": "certifications/Microsoft Certified Professional.pdf"
+  },
+  {
+    "id": "programming-in-csharp",
+    "title": "Programming in C#",
+    "issuer": "Microsoft",
+    "link": "certifications/Programming in C#.pdf"
+  }
+]
