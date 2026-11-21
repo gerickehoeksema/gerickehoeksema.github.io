@@ -169,18 +169,17 @@ Templates are C# raw strings in `build/SiteBuilder/Rendering/`, so a typo in a t
 
 ## Continuous integration
 
-`.github/workflows/build.yml` runs on every push and pull request:
+`.github/workflows/build.yml` runs on every push and pull request, and nightly:
 
 1. `dotnet test`
 2. `dotnet run --project build/SiteBuilder`
-3. A last check that no `class="todo"` reached `dist/`
-4. Uploads `dist/` as the `site` artifact (kept 7 days), so you can download and inspect exactly what would be published.
-
-It does **not** deploy yet.
+3. Checks that no `class="todo"` reached `dist/` and that the emergency page is in the build
+4. Uploads `dist/` as the Pages artifact (`github-pages` on the run), so you can download and inspect exactly what would be published
+5. **On `main` only:** deploys it to GitHub Pages (see below; needs the Pages source switched to GitHub Actions)
 
 ## Deploying with GitHub Actions
 
-To make the live site come from the builder (and so publish articles), switch GitHub Pages from "serve the branch" to "deploy from a workflow". It takes two changes: one setting, and a deploy job in the workflow.
+To make the live site come from the builder (and so publish articles), switch GitHub Pages from "serve the branch" to "deploy from a workflow". The deploy job is already in the workflow; the one change left is a setting.
 
 ### 1. Switch the Pages source
 
@@ -190,11 +189,11 @@ To make the live site come from the builder (and so publish articles), switch Gi
 
 GitHub creates (or reuses) an environment called **github-pages**. Under **Settings → Environments → github-pages**, check that **Deployment branches** only allows `main`, so a feature branch can never deploy.
 
-> Until step 2 is merged, nothing deploys, and the live site keeps whatever was last published. Do step 1 and merge step 2 close together.
+> **Order matters.** Switch the setting *before* the workflow reaches `main`. If the workflow is merged while Pages is still on *Deploy from a branch*, the `deploy` job fails (the site itself keeps being served from the branch, so nothing breaks, but the run goes red). Once the source is GitHub Actions, the repository root is no longer served, so deploys must keep passing.
 
-### 2. Add the deploy job
+### 2. The deploy job
 
-Replace `.github/workflows/build.yml` with:
+Already in `.github/workflows/build.yml`:
 
 ```yaml
 name: Build and deploy site
@@ -262,9 +261,9 @@ jobs:
         uses: actions/deploy-pages@v4
 ```
 
-What changes compared with the current workflow:
+What it does:
 
-- `upload-pages-artifact` packages `dist/` in the format Pages expects (it replaces `upload-artifact`).
+- `upload-pages-artifact` packages `dist/` in the format Pages expects.
 - The `deploy` job runs only for `main`, needs the build and tests to pass, and gets the extra `pages` and `id-token` permissions only for itself.
 - The nightly `schedule` rebuilds `main`, which is what makes `publishFrom` dates appear on time.
 - The extra check fails the deploy if the emergency page is ever missing from the build.
