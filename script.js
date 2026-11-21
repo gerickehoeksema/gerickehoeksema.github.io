@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pages = document.querySelectorAll('.page');
     const navLinks = document.querySelectorAll('.nav-link');
     const DEFAULT_PAGE = '#home';
+    if (pages.length === 0) return; // standalone pages (articles) have no hash sections
 
     const isPage = (hash) => Boolean(hash) && hash !== '#' && document.querySelector(`.page${hash}`) !== null;
 
@@ -81,4 +82,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     prefersLight.addEventListener('change', sync);
     sync();
+});
+
+// "Copy link" buttons on articles: copies the canonical URL.
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-copy-link]').forEach((button) => {
+        const label = button.querySelector('span');
+        button.addEventListener('click', async () => {
+            const url = document.querySelector('link[rel="canonical"]')?.href || window.location.href;
+            try {
+                await navigator.clipboard.writeText(url);
+                label.textContent = 'Link copied';
+            } catch (e) {
+                window.prompt('Copy this link:', url);
+                return;
+            }
+            setTimeout(() => { label.textContent = 'Copy link'; }, 2000);
+        });
+    });
 });

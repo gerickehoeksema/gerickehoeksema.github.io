@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- DRAFT: remove this robots tag (and the draft banner below) when publishing. -->
+    <meta name="robots" content="noindex">
+    <title>Breaking up a monolith: what I'd keep, and what I'd do differently · Gericke Hoeksema</title>
+    <meta name="description" content="Lessons from leading a monolith-to-microservices migration: drawing service boundaries, choosing how services talk, and the things I'd change next time.">
+    <meta name="author" content="Gericke Hoeksema">
+    <link rel="canonical" href="https://gerickehoeksema.co.za/articles/monolith-to-microservices/">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap">
+    <link rel="stylesheet" href="/styles.css">
+    <script>
+        try {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+        } catch (e) { /* storage blocked: follow the OS preference */ }
+    </script>
+
+    <!-- Social sharing -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gericke Hoeksema">
+    <meta property="og:title" content="Breaking up a monolith: what I'd keep, and what I'd do differently">
+    <meta property="og:description" content="Lessons from leading a monolith-to-microservices migration: service boundaries, communication, and what I'd change next time.">
+    <meta property="og:url" content="https://gerickehoeksema.co.za/articles/monolith-to-microservices/">
+    <meta property="og:image" content="https://gerickehoeksema.co.za/articles/monolith-to-microservices/og.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Breaking up a monolith: what I'd keep, and what I'd do differently. Gericke Hoeksema.">
+    <meta property="article:author" content="https://gerickehoeksema.co.za/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#0c1624" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f7f1e6" media="(prefers-color-scheme: light)">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Breaking up a monolith: what I'd keep, and what I'd do differently",
+        "description": "Lessons from leading a monolith-to-microservices migration: drawing service boundaries, choosing how services talk, and the things I'd change next time.",
+        "url": "https://gerickehoeksema.co.za/articles/monolith-to-microservices/",
+        "image": "https://gerickehoeksema.co.za/articles/monolith-to-microservices/og.jpg",
+        "datePublished": "2026-12-01",
+        "author": { "@type": "Person", "name": "Gericke Hoeksema", "url": "https://gerickehoeksema.co.za/" },
+        "keywords": ["microservices", "software architecture", ".NET", "Azure", "monolith decomposition"]
+    }
+    </script>
+</head>
+<body>
+    <svg xmlns="http://www.w3.org/2000/svg" hidden>
+        <defs>
+            <symbol id="i-linkedin" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></symbol>
+            <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+            <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+            <symbol id="i-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol>
+            <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+            <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+        </defs>
+    </svg>
+
+    <a href="#main" class="skip-link">Skip to content</a>
+    <nav class="navbar" aria-label="Main">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">Gericke Hoeksema</a>
+            <ul class="nav-menu">
+                <li><a href="/#home" class="nav-link">Home</a></li>
+                <li><a href="/#about" class="nav-link">About Me</a></li>
+                <li><a href="/#experience" class="nav-link">Experience</a></li>
+                <li><a href="/#projects" class="nav-link">Projects</a></li>
+                <li><a href="/#blog" class="nav-link active" aria-current="page">Articles</a></li>
+            </ul>
+            <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle light and dark theme">
+                <svg class="icon icon-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+                <svg class="icon icon-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main id="main" class="main-content" tabindex="-1">
+        <article class="article">
+            <p class="draft-banner" role="note">
+                <strong>Draft.</strong> Highlighted text marks places where you need to fill in a real detail.
+                Remove the highlights, this banner and the <code>noindex</code> tag in <code>&lt;head&gt;</code> before publishing.
+            </p>
+
+            <a href="/#blog" class="article-back"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"/></svg> All articles</a>
+
+            <header class="article-header">
+                <p class="article-kicker">Architecture</p>
+                <h1>Breaking up a monolith: what I'd keep, and what I'd do differently</h1>
+                <p class="article-lede">I led the move from a monolith to independently deployable services. Here's how we drew the lines, how the services ended up talking to each other, and the things I'd change if I did it again tomorrow.</p>
+                <p class="article-byline">
+                    <span>Gericke Hoeksema</span>
+                    <span aria-hidden="true">·</span>
+                    <time datetime="2026-12-01"><mark class="todo">1 December 2026</mark></time>
+                    <span aria-hidden="true">·</span>
+                    <span class="article-reading"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg> 8 min read</span>
+                </p>
+            </header>
+
+            <div class="prose">
+                <p>Most monolith-to-microservices stories start with a diagram of tidy little boxes. Ours started with a deployment that needed <mark class="todo">[how long / how many people / how much coordination]</mark> and a team that had learned to be nervous on release day.</p>
+
+                <p>This isn't a "microservices good, monolith bad" post. A well-structured monolith is a perfectly good architecture, and for many teams it's the right one. This is about what happens when the monolith stops fitting the team and the product, and the decisions that mattered most when we split it up.</p>
+
+                <h2>Where we started</h2>
+
+                <p>The product was a single <mark class="todo">[ASP.NET / .NET version]</mark> application with one shared database. It had grown for <mark class="todo">[N]</mark> years, and it showed the usual symptoms:</p>
+
+                <ul>
+                    <li><strong>Every change shipped everything.</strong> A small fix in one area meant redeploying the whole system, so releases got bigger and rarer.</li>
+                    <li><strong>The database was the real integration layer.</strong> Modules read and wrote each other's tables directly, so nobody could change a schema with confidence.</li>
+                    <li><strong>Teams stepped on each other.</strong> <mark class="todo">[A concrete example: a merge conflict, a release blocked by another team's change, a slow build.]</mark></li>
+                </ul>
+
+                <p>None of these is a reason to adopt microservices on its own. Together, they meant the architecture was now slowing the team down more than it was helping.</p>
+
+                <figure class="diagram-figure">
+                    <div class="diagram-pair">
+                        <svg class="diagram" viewBox="0 0 340 260" role="img" aria-labelledby="d-before">
+                            <title id="d-before">Before: four modules in one deployable, all sharing one database</title>
+                            <rect class="d-frame" x="10" y="10" width="320" height="150" rx="12"/>
+                            <text class="d-label" x="170" y="32">Monolith · one deployable</text>
+                            <rect x="30" y="45" width="130" height="44" rx="8"/><text x="95" y="72">Module A</text>
+                            <rect x="180" y="45" width="130" height="44" rx="8"/><text x="245" y="72">Module B</text>
+                            <rect x="30" y="100" width="130" height="44" rx="8"/><text x="95" y="127">Module C</text>
+                            <rect x="180" y="100" width="130" height="44" rx="8"/><text x="245" y="127">Module D</text>
+                            <line class="d-line" x1="170" y1="160" x2="170" y2="192"/>
+                            <path class="d-db" d="M120 200 v40 a50 9 0 0 0 100 0 v-40"/>
+                            <ellipse class="d-db" cx="170" cy="200" rx="50" ry="9"/>
+                            <text x="170" y="232">Shared DB</text>
+                        </svg>
+                        <svg class="diagram" viewBox="0 0 340 290" role="img" aria-labelledby="d-after">
+                            <title id="d-after">After: an API gateway in front of three services, each with its own database, publishing events to a message bus</title>
+                            <rect x="95" y="10" width="150" height="36" rx="8"/><text x="170" y="33">API gateway</text>
+                            <line class="d-line" x1="140" y1="46" x2="60" y2="80"/>
+                            <line class="d-line" x1="170" y1="46" x2="170" y2="80"/>
+                            <line class="d-line" x1="200" y1="46" x2="280" y2="80"/>
+                            <rect x="10" y="80" width="100" height="44" rx="8"/><text x="60" y="107">Service A</text>
+                            <rect x="120" y="80" width="100" height="44" rx="8"/><text x="170" y="107">Service B</text>
+                            <rect x="230" y="80" width="100" height="44" rx="8"/><text x="280" y="107">Service C</text>
+                            <line class="d-line" x1="60" y1="124" x2="60" y2="146"/>
+                            <line class="d-line" x1="170" y1="124" x2="170" y2="146"/>
+                            <line class="d-line" x1="280" y1="124" x2="280" y2="146"/>
+                            <path class="d-db" d="M35 152 v28 a25 6 0 0 0 50 0 v-28"/><ellipse class="d-db" cx="60" cy="152" rx="25" ry="6"/>
+                            <path class="d-db" d="M145 152 v28 a25 6 0 0 0 50 0 v-28"/><ellipse class="d-db" cx="170" cy="152" rx="25" ry="6"/>
+                            <path class="d-db" d="M255 152 v28 a25 6 0 0 0 50 0 v-28"/><ellipse class="d-db" cx="280" cy="152" rx="25" ry="6"/>
+                            <line class="d-line d-dashed" x1="20" y1="124" x2="20" y2="238"/>
+                            <line class="d-line d-dashed" x1="130" y1="124" x2="130" y2="238"/>
+                            <line class="d-line d-dashed" x1="240" y1="124" x2="240" y2="238"/>
+                            <rect class="d-bus" x="10" y="238" width="320" height="40" rx="8"/><text x="170" y="263">Message bus · events</text>
+                        </svg>
+                    </div>
+                    <figcaption>Before and after, simplified. <mark class="todo">[Rename the modules and services to your real business capabilities, or keep them generic.]</mark></figcaption>
+                </figure>
+
+                <h2>1. Draw boundaries around the business, not the code</h2>
+
+                <p>The tempting first cut is technical: an "API service", a "data service", a "notifications service". That gives you a distributed monolith, where every feature still touches every service.</p>
+
+                <p>What worked better was to start from <strong>business capabilities</strong> and ask three questions of each candidate service:</p>
+
+                <ol>
+                    <li><strong>Does it own its data?</strong> If two services must write the same table, they're one service, or the boundary is in the wrong place.</li>
+                    <li><strong>Can one team own it end to end?</strong> A service with no clear owner becomes everyone's problem.</li>
+                    <li><strong>Can it change and deploy on its own most of the time?</strong> If a typical feature needs coordinated releases of three services, the lines are wrong.</li>
+                </ol>
+
+                <p>We ended up with <mark class="todo">[N]</mark> services. The first one we extracted was <mark class="todo">[which one, and why it was a good first candidate: low risk, clear data, high change rate?]</mark>.</p>
+
+                <h2>2. Strangle the monolith, don't rewrite it</h2>
+
+                <p>We never stopped the world for a rewrite. We used the <strong>Strangler Fig</strong> pattern: put a routing layer in front of the monolith, build the new service next to it, then move traffic over one route at a time. The monolith shrank while the product kept shipping.</p>
+
+                <p>Where a new service still had to talk to old code, we put an <strong>anti-corruption layer</strong> between them: a small translation boundary so the monolith's models and naming didn't leak into the new service. It feels like extra work at the time. It's the reason the new services still look clean today.</p>
+
+                <h2>3. Decide how services talk, deliberately</h2>
+
+                <p>The most important decision after the boundaries is the communication model. The rule of thumb we settled on:</p>
+
+                <ul>
+                    <li><strong>Synchronous (HTTP) for queries</strong>, when the caller genuinely needs an answer right now to continue.</li>
+                    <li><strong>Asynchronous events for state changes.</strong> "An order was placed" is published once, and any service that cares reacts in its own time. We used <mark class="todo">[Azure Service Bus / RabbitMQ / other]</mark>.</li>
+                </ul>
+
+                <p>Events bring a classic trap: you save to your database, then publish to the bus, and the process dies in between. The <strong>transactional outbox</strong> pattern fixes this by storing the event in the same database transaction as the state change, then publishing it from a background worker:</p>
+
+<pre><code class="language-csharp">public async Task PlaceOrderAsync(PlaceOrder command, CancellationToken ct)
+{
+    var order = Order.Place(command.CustomerId, command.Lines);
+    _db.Orders.Add(order);
+
+    // Stored in the same transaction as the order itself,
+    // so the event exists if and only if the order does.
+    _db.OutboxMessages.Add(OutboxMessage.From(new OrderPlaced(order.Id, order.Total)));
+
+    await _db.SaveChangesAsync(ct);
+    // A background worker reads the outbox and publishes to the bus.
+}</code></pre>
+
+                <p>The other half of the deal: <strong>every consumer must be idempotent</strong>. Message brokers deliver at least once, so handling the same event twice has to be harmless.</p>
+
+                <h2>4. Write the decisions down</h2>
+
+                <p>Every significant choice (a boundary, a broker, a data-ownership rule) went into a short <strong>Architecture Decision Record</strong>: the context, the options, what we chose, and what it costs us. Months later, when someone asks "why on earth is it like this?", the answer is one link away. It also made design reviews faster, because people argued about the trade-offs on paper instead of from memory.</p>
+
+                <h2>What went well</h2>
+
+                <ul>
+                    <li><strong>Independent releases.</strong> <mark class="todo">[A before/after: release frequency, lead time, or simply "a fix in X no longer waits for Y".]</mark></li>
+                    <li><strong>Clearer ownership.</strong> Each service has a team that knows it, and code reviews got sharper because the scope was smaller.</li>
+                    <li><strong>Safer change.</strong> Owning its data means a service can change its schema without a cross-team meeting.</li>
+                </ul>
+
+                <h2>What I'd do differently</h2>
+
+                <p>This is the part I most wanted to write. <mark class="todo">[Keep the points that are true for you, cut the rest, and add your own.]</mark></p>
+
+                <ul>
+                    <li><strong>Build observability first, not last.</strong> Correlation IDs, distributed tracing (OpenTelemetry into Application Insights) and structured logs should exist before the second service does. Debugging a request across services without them is guesswork.</li>
+                    <li><strong>Start with a modular monolith.</strong> Enforcing module boundaries <em>inside</em> the monolith first, with separate schemas and no cross-module table access, would have shown us the right seams before we paid for network calls.</li>
+                    <li><strong>Make services fewer and bigger at first.</strong> It's much easier to split a service that has grown too big than to merge two that are too chatty.</li>
+                    <li><strong>Don't share domain libraries.</strong> A shared "common models" package quietly couples every service to every other one. Share contracts (message and API schemas), not domain classes.</li>
+                    <li><strong>Invest in the paved road.</strong> Templates for a new service (pipeline, health checks, logging, config) pay for themselves by the third service.</li>
+                </ul>
+
+                <h2>A checklist before you split</h2>
+
+                <ol class="checklist">
+                    <li>Can you name the business capability each service owns, in one sentence?</li>
+                    <li>Does each service own its data, with no shared tables?</li>
+                    <li>Is there one team accountable for each service?</li>
+                    <li>Have you chosen, per interaction, between a synchronous call and an event?</li>
+                    <li>Are events published reliably (outbox) and consumed idempotently?</li>
+                    <li>Can you trace one request across every service it touches?</li>
+                    <li>Are the big decisions written down as ADRs?</li>
+                </ol>
+
+                <p>If most of these are "not yet", a modular monolith is probably the better next step, and that's a perfectly good place to be.</p>
+
+                <p class="article-cta">I'd love to hear how other teams approached this. What would you add to the list? Let me know on <a href="https://www.linkedin.com/in/gericke-hoeksema-b132997b/" target="_blank" rel="noopener noreferrer">LinkedIn</a>.</p>
+            </div>
+
+            <footer class="article-footer">
+                <p class="article-share-label">Share this article</p>
+                <div class="article-share">
+                    <a class="btn btn-social brand-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fgerickehoeksema.co.za%2Farticles%2Fmonolith-to-microservices%2F" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-linkedin"/></svg>Share on LinkedIn</a>
+                    <button type="button" class="btn" data-copy-link><svg class="icon" aria-hidden="true"><use href="#i-link"/></svg><span>Copy link</span></button>
+                </div>
+            </footer>
+        </article>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 Gericke Hoeksema. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="/#home">Home</a>
+                <a href="/#about">About Me</a>
+                <a href="/#blog">Articles</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/script.js"></script>
+</body>
+</html>
