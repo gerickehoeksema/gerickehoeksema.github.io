@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace SiteBuilder.Content;
 
-/// <summary>Which side of the site an item belongs to. Drives the Work / All / Life lens (PLAN-v3 §3.2).</summary>
+/// <summary>Which side of the site an item belongs to. Drives the Work / All / Life lens (PLAN-v3 §3.1).</summary>
 public enum Lens
 {
     Work,
