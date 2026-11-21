@@ -159,7 +159,8 @@ public class PipelineTests
 
         var ex = Assert.Throws<BuildException>(() => site.Build());
 
-        Assert.Contains("articles", ex.Message);
+        Assert.Contains("not found", ex.Message);
+        Assert.Contains("<!-- build:", ex.Message); // tells you which marker to add
     }
 
     [Fact]

@@ -9,7 +9,35 @@ internal sealed class TestSite : IDisposable
 
     private const string IndexHtml = """
         <!DOCTYPE html>
-        <html><body>
+        <html><head>
+            <!-- build:meta --><title>fallback title</title><!-- /build:meta -->
+            <!-- build:social --><!-- /build:social -->
+            <!-- build:jsonld --><!-- /build:jsonld -->
+        </head><body>
+            <div class="profile-info">
+                <!-- build:profile --><h1>fallback name</h1><!-- /build:profile -->
+            </div>
+            <div class="profile-actions">
+                <!-- build:links --><!-- /build:links -->
+            </div>
+            <div class="card-content">
+                <!-- build:intro --><!-- /build:intro -->
+            </div>
+            <div class="skills-container">
+                <!-- build:skills --><!-- /build:skills -->
+            </div>
+            <div class="card-content">
+                <!-- build:about --><!-- /build:about -->
+                <div class="competencies-grid">
+                    <!-- build:competencies --><!-- /build:competencies -->
+                </div>
+            </div>
+            <div class="education">
+                <!-- build:education --><!-- /build:education -->
+            </div>
+            <footer>
+                <!-- build:copyright --><p>fallback copyright</p><!-- /build:copyright -->
+            </footer>
             <div class="timeline">
                 <!-- build:experience · generated -->
                 <p>fallback experience</p>
@@ -40,7 +68,24 @@ internal sealed class TestSite : IDisposable
         File.WriteAllText(Path.Combine(Root, "styles.css"), "body{}");
         File.WriteAllText(Path.Combine(Root, "README.md"), "source only");
         Directory.CreateDirectory(Path.Combine(Root, "content", "articles"));
+        WithJson("profile.json", DefaultProfile);
     }
+
+    public const string DefaultProfile = """
+        {
+          "name": "Test Person",
+          "givenName": "Test",
+          "familyName": "Person",
+          "jobTitle": "Software Architect",
+          "headline": "Builder of things",
+          "location": { "locality": "Jeffreys Bay", "country": "South Africa", "countryCode": "ZA" },
+          "description": "Search description",
+          "shareDescription": "Share description",
+          "image": "images/profile-600.webp",
+          "knowsAbout": ["C#"],
+          "sameAs": ["https://github.com/example"]
+        }
+        """;
 
     public string Root { get; }
 
@@ -67,6 +112,12 @@ internal sealed class TestSite : IDisposable
     public TestSite WithJson(string fileName, string json)
     {
         File.WriteAllText(Path.Combine(Root, "content", fileName), json);
+        return this;
+    }
+
+    public TestSite WithText(string fileName, string text)
+    {
+        File.WriteAllText(Path.Combine(Root, "content", fileName), text);
         return this;
     }
 

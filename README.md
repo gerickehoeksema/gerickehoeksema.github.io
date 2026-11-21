@@ -13,12 +13,11 @@ index.html, styles.css, images/, ... ──┘
 ```
 
 - **Hand-written files** (`index.html`, `styles.css`, `script.js`, `medical/`, images, PDFs) are copied into `dist/` as they are.
-- **Content** (Experience, Certifications, Projects, Articles) lives in `content/`. The builder renders it into the marked regions of `index.html` and into one page per article.
+- **Content** (profile and page metadata, links, Intro, Skills, About, Competencies, Experience, Certifications, Projects, Education, Articles) lives in `content/`. The builder renders it into the marked regions of `index.html` and into one page per article. `index.html` is now the layout: navigation, images, the icon sprite and the order of the sections.
 - **Visibility rules** decide what gets published: drafts are never written to `dist/`, scheduled items appear on their date, unlisted items are reachable by link only.
 
-> **Current state: test run.** GitHub Pages still serves the repository root directly, not `dist/`.
-> That works because `index.html` keeps hand-written fallback markup between its build markers.
-> Articles only go live once Pages deploys from the build. See [Deploying with GitHub Actions](#deploying-with-github-actions).
+Every push to `main` is tested, built and deployed to GitHub Pages by GitHub Actions, and `main` is rebuilt nightly. See [Deploying with GitHub Actions](#deploying-with-github-actions).
+`index.html` still holds hand-written fallback markup between its build markers, so [rolling back](#rolling-back) to serving the branch keeps working.
 
 ## Repository layout
 
@@ -31,15 +30,22 @@ medical/index.html    Emergency medical page for the QR stickers (self-contained
 medical.html          Old address; redirects to /medical/ without JavaScript
 404.html              Not-found page, with a /medical safety net
 robots.txt            Keeps /medical out of search engines
-sitemap.xml           Used only while Pages serves the root; the builder generates its own
-CNAME                 Custom domain (used while Pages serves the root)
+sitemap.xml           Only used if Pages is rolled back to serve the branch; the builder generates its own
+CNAME                 Custom domain, only used if Pages is rolled back (Actions deploys take it from Settings)
 images/               Banner, avatar and share image (JPEG + WebP)
 certifications/       Certificate PDFs
 
-content/              Everything the builder renders
+content/              Everything the builder renders (prose in Markdown, lists in JSON)
+  profile.json          Name, job title, headline, location; drives <title>, description, share card, JSON-LD
+  links.json            Buttons under the profile header (Email, LinkedIn, ...)
+  intro.md              Home page Intro
+  skills.json           Home page Skills & Expertise tiles
+  about.md              About page Professional Background text
+  competencies.json     About page Core Competencies groups
   experience.json       Experience timeline
   certifications.json   Certificates
   projects.json         Project cards
+  education.json        Education
   articles/<id>/        One folder per article: index.md + assets (e.g. og.jpg)
 
 build/
@@ -56,11 +62,21 @@ PLAN-v3.md                    Improvement plan
 
 | Section | Where to edit |
 |---|---|
+| Name, job title, headline, location; page title, search description, share card, JSON-LD | `content/profile.json` |
+| Buttons under the header (Email, LinkedIn, Instagram, Strava, chess.com, Goodreads) | `content/links.json` |
+| Intro (Home) | `content/intro.md` |
+| Skills & Expertise (Home) | `content/skills.json` |
+| Professional Background (About) | `content/about.md` |
+| Core Competencies (About) | `content/competencies.json` |
 | Experience | `content/experience.json` |
 | Certifications | `content/certifications.json` (+ the PDF in `certifications/`) |
+| Education | `content/education.json` |
 | Projects | `content/projects.json` |
 | Articles | `content/articles/<id>/index.md` |
-| Profile header, social links, Intro, Skills, About, Education | `index.html` (not moved to content yet) |
+| Footer year | Automatic: the year of the build |
+| Layout, navigation, images, banner and avatar alt text, icon sprite | `index.html` |
+
+The rule of thumb: **prose is Markdown, lists are JSON.** `profile.json` is required; any other file can be missing (that section is then empty).
 
 After editing, run the tests and a build (see [Building and previewing](#building-and-previewing)). CI does the same on every push.
 
@@ -79,6 +95,38 @@ Every item, in JSON or in article front matter, can use the same fields (PLAN-v3
 Parsing is strict: an unknown field fails the build, so a typo like `visiblity: draft` can't accidentally publish a draft.
 
 ### Examples
+
+**The profile** (`content/profile.json`). The job title appears in the page title, the share card title and the JSON-LD, so changing positioning is one edit:
+
+```json
+{
+  "name": "Gericke Hoeksema",
+  "givenName": "Gericke",
+  "familyName": "Hoeksema",
+  "jobTitle": "Software Architect",
+  "headline": "Software Developer - Cyclist - Chess player - Xbox gamer - Not yet a surfer",
+  "location": { "locality": "Jeffreys Bay", "country": "South Africa", "countryCode": "ZA" },
+  "description": "Shown in search results",
+  "shareDescription": "Shown on LinkedIn / WhatsApp share cards",
+  "image": "images/profile-600.webp",
+  "knowsAbout": ["C#", ".NET", "Microsoft Azure"],
+  "sameAs": ["https://www.linkedin.com/in/...", "https://github.com/gerickehoeksema"]
+}
+```
+
+**A header button** (`content/links.json`, shown in file order). `primary: true` makes it the amber button; `brand` colours the icon. A `#` link (a placeholder until you have the URL) stays on the page without opening a new tab; set `"visibility": "draft"` to hide a button instead.
+
+```json
+{ "id": "strava", "label": "Strava", "url": "https://www.strava.com/athletes/3057211", "icon": "strava", "brand": "strava" }
+```
+
+**A skill** (`content/skills.json`): `{ "id": "azure", "title": "Azure Cloud", "description": "Cloud architecture & solutions", "icon": "cloud" }`
+
+**A competency group** (`content/competencies.json`): `{ "id": "architecture", "title": "Architecture", "items": ["Microservices and monolith decomposition", "..."] }`
+
+**An education item** (`content/education.json`): `{ "id": "cti", "school": "CTI Education Group", "qualification": "Software Development and IT Studies", "start": 2008, "end": 2009 }`. Leave out `start` for a single year.
+
+**Intro and About** (`content/intro.md`, `content/about.md`): plain Markdown paragraphs, no front matter. Links and **bold** work.
 
 **A role** (`content/experience.json`, newest first is automatic; leave out `end` while current):
 
@@ -175,13 +223,13 @@ Templates are C# raw strings in `build/SiteBuilder/Rendering/`, so a typo in a t
 2. `dotnet run --project build/SiteBuilder`
 3. Checks that no `class="todo"` reached `dist/` and that the emergency page is in the build
 4. Uploads `dist/` as the Pages artifact (`github-pages` on the run), so you can download and inspect exactly what would be published
-5. **On `main` only:** deploys it to GitHub Pages (see below; needs the Pages source switched to GitHub Actions)
+5. **On `main` only:** deploys it to GitHub Pages
 
 ## Deploying with GitHub Actions
 
-To make the live site come from the builder (and so publish articles), switch GitHub Pages from "serve the branch" to "deploy from a workflow". The deploy job is already in the workflow; the one change left is a setting.
+The live site is deployed by the workflow. These are the settings it depends on, for reference or for setting up a fresh copy of the repository.
 
-### 1. Switch the Pages source
+### 1. Pages source
 
 1. On GitHub, open the repository's **Settings → Pages**.
 2. Under **Build and deployment → Source**, choose **GitHub Actions** (instead of *Deploy from a branch*).
@@ -189,7 +237,7 @@ To make the live site come from the builder (and so publish articles), switch Gi
 
 GitHub creates (or reuses) an environment called **github-pages**. Under **Settings → Environments → github-pages**, check that **Deployment branches** only allows `main`, so a feature branch can never deploy.
 
-> **Order matters.** Switch the setting *before* the workflow reaches `main`. If the workflow is merged while Pages is still on *Deploy from a branch*, the `deploy` job fails (the site itself keeps being served from the branch, so nothing breaks, but the run goes red). Once the source is GitHub Actions, the repository root is no longer served, so deploys must keep passing.
+> The repository root is no longer served directly, so the live site only changes when a deploy passes. A failing test or a broken content file stops the deploy and leaves the previous version live.
 
 ### 2. The deploy job
 
@@ -324,7 +372,7 @@ for w in (900, 1792):
 
 ## Running the hand-written site without building
 
-While Pages still serves the root, you can also look at the repository as-is:
+To see the fallback markup (what a rollback would serve), look at the repository as-is:
 
 ```bash
 python3 -m http.server 8000

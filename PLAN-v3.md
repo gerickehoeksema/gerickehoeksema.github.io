@@ -2,7 +2,7 @@
 
 **Goal:** turn the site into the bridge between Gericke-the-architect and Gericke-the-cyclist / chess player / Jimny explorer, with **full control over what is shown, to whom, and when**.
 
-Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh: palette, SVG icons, typography, light mode) are done and have been removed from this plan. Phase 2 is in a test run: the C# builder renders Experience, Certifications, Projects and Articles into `dist/` and CI builds it, but GitHub Pages still serves the repository root.
+Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh: palette, SVG icons, typography, light mode) are done and have been removed from this plan. Phase 2 is live: GitHub Actions builds the site with the C# builder and deploys it to GitHub Pages, and every section of the profile page now comes from `content/`.
 
 ---
 
@@ -10,7 +10,7 @@ Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh: palette
 
 | Area | Current state | Problem |
 |---|---|---|
-| Content | Experience, Certifications, Projects and Articles come from `content/` (Phase 2 test run). The profile header, Intro, Skills, About and Education are still hard-coded in `index.html`. | Most changes still mean editing HTML by hand, and those sections can't be switched off without deleting them. |
+| Content | Every section comes from `content/` (prose in Markdown, lists in JSON); `index.html` is the layout. | The hand-written fallback markup between the build markers is now redundant (see the README clean-up step). |
 | Personal vs. work | Personal life is two sentences in "Intro". Everything else is CV. | The site reads as a CV with a nice banner, not a bridge between the two. |
 | Emergency page | `medical/index.html`, reached from the QR sticker on the bikes and helmets. Served without JavaScript at `/medical`, `/medical/` and `/medical.html`. | Nothing guards that URL against a future change, and the repo is public, so the source and its git history are readable on GitHub. See §4.2. |
 
@@ -88,8 +88,8 @@ A three-way segmented control under the profile header:
 
 ### 4.1 Structure
 - `styles.css` is already organised into `@layer reset, tokens, base, layout, components, utilities`. Once the build step exists, split each layer into its own file and bundle at build time.
-- Render components from data: one template per content type (experience item, project card, life card) instead of copy-pasted HTML blocks.
-- Fix the inconsistent title: `<title>` says "Software Architect" while the experience section says "Senior Software Developer". Pick one positioning and drive both (plus the Open Graph and JSON-LD job title) from `profile.json`.
+- ~~Render components from data~~: done. One template per content type in `build/SiteBuilder/Rendering/`; Life cards come with Phase 3.
+- Fix the inconsistent title: `<title>` says "Software Architect" while the experience section says "Senior Software Developer". The `<title>`, Open Graph title and JSON-LD job title are now all driven by `jobTitle` in `content/profile.json`, so this is a one-line change once decision 1 is made.
 
 ### 4.2 Emergency page (QR sticker)
 The QR stickers on the bikes and helmets are printed, so **`/medical` is a contract that must never break**, and the page must open instantly for a stranger with no login.
@@ -159,7 +159,7 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 
 | Phase | Scope | Size |
 |---|---|---|
-| **2. Content as data** | Test run done: `build/SiteBuilder` (.NET 10) with Specification-based visibility rules, a step pipeline, 50 tests and a CI workflow; Experience, Certifications, Projects and Articles come from `content/`. Remaining: move the profile header and links, Skills, About and Education to content, then deploy `dist/` with `actions/deploy-pages`. | Medium |
+| ~~**2. Content as data**~~ | Done: `build/SiteBuilder` (.NET 10) with Specification-based visibility rules, a step pipeline and 60 tests; every section comes from `content/`; GitHub Actions deploys `dist/` to Pages and rebuilds nightly. Left: remove the fallback markup from `index.html` once the Actions deploy has proved itself. | Medium |
 | **3. The bridge** | Lens switch, Home "Now" card, Life page (with its own card style), merged Work page. | Medium |
 | **4. Integrations** | chess.com, Strava, Goodreads, Jimny trips, EXIF stripping. | Medium |
 | **5. Azure SWA** | Private repo, auth-protected friends lens (medical stays public), PR previews, Functions for Strava OAuth. | Medium |
@@ -168,9 +168,9 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 
 ## 8. Decisions for you
 
-1. **Positioning:** "Software Architect" or "Senior Developer / Tech Lead, working towards architect"? The headline, `<title>`, and meta description should agree.
+1. **Positioning:** "Software Architect" or "Senior Developer / Tech Lead, working towards architect"? The headline, `<title>`, and meta description should agree. They all live in `content/profile.json` now (`jobTitle`, `headline`, `description`).
 2. ~~**Build stack**~~: decided, the C# builder (Option B) on GitHub Pages.
 3. **Medical page content:** it stays public for the QR code. Should anything currently on it be trimmed (for example ID number or address)?
 4. **Default lens** for first-time visitors: All, or Work?
 5. **Strava detail level:** totals only, or individual rides with maps (start/finish trimmed)?
-6. **Goodreads link:** the button is still `href="#"`. Which URL should it use?
+6. ~~**Goodreads link**~~: decided, <https://www.goodreads.com/user/show/149708282-gericke-hoeksema>.

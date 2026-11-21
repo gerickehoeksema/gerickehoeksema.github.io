@@ -39,6 +39,18 @@ public sealed class BuildContext(BuildOptions options, Action<string> log)
     public IReadOnlyList<Article> ListedArticles { get; set; } = [];
 
     /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>
+    public IReadOnlyList<ProfileLink> ListedLinks { get; set; } = [];
+
+    /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>
+    public IReadOnlyList<Skill> ListedSkills { get; set; } = [];
+
+    /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>
+    public IReadOnlyList<CompetencyGroup> ListedCompetencies { get; set; } = [];
+
+    /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>
+    public IReadOnlyList<EducationItem> ListedEducation { get; set; } = [];
+
+    /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>
     public IReadOnlyList<ExperienceItem> ListedExperience { get; set; } = [];
 
     /// <summary>Set by <c>ApplyVisibilityStep</c>.</summary>

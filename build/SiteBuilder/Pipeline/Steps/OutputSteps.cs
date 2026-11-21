@@ -119,7 +119,21 @@ public sealed class RenderHomeStep : IBuildStep
             throw new BuildException("index.html was not found in the output. Is the root folder correct?");
         }
 
+        var profile = context.Content.Profile
+            ?? throw new BuildException("content/profile.json is missing: the page title, header and metadata come from it.");
         var html = File.ReadAllText(path);
+
+        html = Regions.Replace(html, "meta", ProfileSections.Meta(profile));
+        html = Regions.Replace(html, "social", ProfileSections.Social(profile));
+        html = Regions.Replace(html, "jsonld", ProfileSections.JsonLd(profile, context.Options.SiteUrl));
+        html = Regions.Replace(html, "profile", ProfileSections.Header(profile));
+        html = Regions.Replace(html, "links", ProfileSections.LinkButtons(context.ListedLinks));
+        html = Regions.Replace(html, "intro", context.Content.IntroHtml);
+        html = Regions.Replace(html, "skills", ProfileSections.Skills(context.ListedSkills));
+        html = Regions.Replace(html, "about", context.Content.AboutHtml);
+        html = Regions.Replace(html, "competencies", ProfileSections.Competencies(context.ListedCompetencies));
+        html = Regions.Replace(html, "education", ProfileSections.Education(context.ListedEducation));
+        html = Regions.Replace(html, "copyright", ProfileSections.Copyright(profile, context.Options.Today));
         html = Regions.Replace(html, "experience", HomeSections.Experience(context.ListedExperience));
         html = Regions.Replace(html, "articles", HomeSections.ArticleCards(context.ListedArticles));
         html = Regions.Replace(html, "certifications", HomeSections.Certifications(context.ListedCertifications));

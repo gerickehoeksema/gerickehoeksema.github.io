@@ -1,0 +1,15 @@
+[
+  {
+    "id": "cti-education-group",
+    "school": "CTI Education Group",
+    "qualification": "Software Development and IT Studies",
+    "start": 2008,
+    "end": 2009
+  },
+  {
+    "id": "westonaria-high-school",
+    "school": "Westonaria High School",
+    "qualification": "Matric",
+    "end": 2007
+  }
+]

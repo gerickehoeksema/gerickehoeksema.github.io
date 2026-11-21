@@ -1,0 +1,1 @@
+With 15+ years of experience in enterprise software development, I specialise in designing systems that are technically sound, scalable, and aligned to the realities of business delivery. My work spans .NET application architecture, team leadership, distributed systems, and cloud-based solution design.

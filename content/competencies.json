@@ -1,0 +1,42 @@
+[
+  {
+    "id": "architecture",
+    "title": "Architecture",
+    "items": [
+      "Microservices and monolith decomposition",
+      "Distributed systems and API design",
+      "Technical documentation and decision records",
+      "Architecture reviews and delivery planning"
+    ]
+  },
+  {
+    "id": "leadership",
+    "title": "Leadership",
+    "items": [
+      "Technical and team leadership",
+      "Mentoring and code review",
+      "TDD adoption and engineering standards",
+      "Agile delivery in Scrum environments"
+    ]
+  },
+  {
+    "id": "backend-frontend",
+    "title": "Backend & Frontend",
+    "items": [
+      "C#, .NET / ASP.NET Core, MVC and Web API",
+      "Blazor, SignalR, Entity Framework and Dapper",
+      "React, Next.js and Vue.js",
+      "SQL Server, PostgreSQL and MySQL"
+    ]
+  },
+  {
+    "id": "cloud-tooling",
+    "title": "Cloud & Tooling",
+    "items": [
+      "Azure and Google Cloud Platform",
+      "Cosmos DB, SQL Server, SSRS and SSIS",
+      "Azure DevOps, Git, GitHub and Bitbucket",
+      "Visual Studio, Rider and VS Code"
+    ]
+  }
+]
