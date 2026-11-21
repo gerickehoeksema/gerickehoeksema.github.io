@@ -117,7 +117,7 @@ Parsing is strict: an unknown field fails the build, so a typo like `visiblity: 
 **A header button** (`content/links.json`, shown in file order). `primary: true` makes it the amber button; `brand` colours the icon. A `#` link (a placeholder until you have the URL) stays on the page without opening a new tab; set `"visibility": "draft"` to hide a button instead.
 
 ```json
-{ "id": "strava", "label": "Strava", "url": "https://strava.app.link/...", "icon": "strava", "brand": "strava" }
+{ "id": "strava", "label": "Strava", "url": "https://www.strava.com/athletes/3057211", "icon": "strava", "brand": "strava" }
 ```
 
 **A skill** (`content/skills.json`): `{ "id": "azure", "title": "Azure Cloud", "description": "Cloud architecture & solutions", "icon": "cloud" }`
