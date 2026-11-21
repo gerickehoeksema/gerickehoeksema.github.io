@@ -1,0 +1,42 @@
+name: Build site
+
+# Test run of the content pipeline (PLAN-v3 Phase 2).
+# Builds and tests on every push and pull request, and uploads dist/ as an artifact to inspect.
+# It does NOT deploy: GitHub Pages still serves the repository root until the switch is made.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Test
+        run: dotnet test --solution build/SiteBuilder.slnx --configuration Release
+
+      - name: Build site
+        run: dotnet run --project build/SiteBuilder --configuration Release
+
+      - name: Check no draft reached dist/
+        run: |
+          if grep -rl 'class="todo"' dist; then
+            echo "::error::Draft placeholders found in dist/"
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: dist/
+          retention-days: 7

@@ -2,15 +2,15 @@
 
 Personal profile site for Gericke Hoeksema, hosted on GitHub Pages at <https://gerickehoeksema.co.za>.
 
-Plain HTML, CSS and JavaScript with no build step (yet; see [`PLAN-v3.md`](PLAN-v3.md)).
+Plain HTML, CSS and JavaScript, plus a small C# site builder that renders content from `content/` (Phase 2 of [`PLAN-v3.md`](PLAN-v3.md), currently a test run: the live site is still served straight from the repository root).
 
 ## Structure
 
 ```
-index.html            Profile: Home, About, Experience, Projects, Articles (hash-based pages)
+index.html            Profile: Home, About, Experience, Projects, Articles (hash-based pages).
+                      <!-- build:name --> regions are filled from content/ by the builder.
 styles.css            All styles, in @layers; colour tokens are light-dark() pairs
 script.js             Page switching between the sections in index.html
-articles/<slug>/       One folder per article: index.html + og.jpg (1200x630 share image)
 medical/index.html    Emergency medical page for the QR stickers (self-contained, see below)
 medical.html          Old address; redirects to /medical/ without JavaScript
 404.html              Not-found page, with a /medical safety net
@@ -24,6 +24,13 @@ images/
   profile-{320,600}.webp
   og-image.jpg                    1200x630 social sharing card
 certifications/       Certificate PDFs
+content/
+  experience.json     Experience timeline
+  articles/<id>/      One folder per article: index.md (front matter + Markdown) and assets (og.jpg)
+build/
+  SiteBuilder/        .NET 10 console app: content -> dist/
+  SiteBuilder.Tests/  xUnit tests (visibility rules, loader, end-to-end builds)
+.github/workflows/    CI: test + build on every push, dist/ uploaded as an artifact
 ```
 
 ## Emergency medical page
@@ -47,15 +54,40 @@ The QR stickers on the bikes and helmets point to this page, so treat its URL as
 - UI icons come from [Lucide](https://lucide.dev) (ISC). Brand icons come from [Simple Icons](https://simpleicons.org) (CC0); LinkedIn was taken from v9 because later versions dropped it.
 - Brand colours are set per button with a `brand-*` class (`brand-linkedin`, `brand-strava`, ...) in `styles.css`.
 
+## Building the site
+
+Needs the [.NET 10 SDK](https://dotnet.microsoft.com/download).
+
+```bash
+dotnet test --solution build/SiteBuilder.slnx               # run the tests
+dotnet run --project build/SiteBuilder                       # build the live site into dist/
+dotnet run --project build/SiteBuilder -- --preview --out dist-preview   # include drafts, for review only
+cd dist && python3 -m http.server 8000                       # look at it
+```
+
+How it works: `LoadContent -> ApplyVisibility -> PublishGuard -> CopyStaticFiles -> RenderArticles -> RenderHome -> WriteSitemap`.
+Each step is one class in `build/SiteBuilder/Pipeline/Steps/`; visibility rules are small specifications in `build/SiteBuilder/Specifications/`.
+
+### Content visibility
+
+Every item has the same fields (see PLAN-v3 §2):
+
+| Field | Values | Effect |
+|---|---|---|
+| `visibility` | `public` (default), `unlisted`, `draft` | Drafts are never written to `dist/`. Unlisted items are built but left out of lists and the sitemap. |
+| `publishFrom` | `yyyy-MM-dd` | Hidden until that date. A nightly rebuild (once deploying from CI) makes it appear. |
+| `lens` | `[work]`, `[life]`, `[work, life]` | Ready for the Work / Life switch. |
+
+Unknown fields are an error, so a typo like `visiblity: draft` fails the build instead of publishing a draft.
+
 ## Publishing an article
 
-Articles are plain pages at `/articles/<slug>/` until the Phase 2 builder takes over (the URLs stay the same).
+1. Replace every `<mark class="todo">` in `content/articles/<id>/index.md`. The build refuses to publish an article that still has one.
+2. In the front matter, set `visibility: public` and the real `date`.
+3. Open a PR. CI builds and tests it; download the `site` artifact to check the result.
+4. After it is live, paste the URL into LinkedIn's [Post Inspector](https://www.linkedin.com/post-inspector/) so the preview card is fresh.
 
-1. Replace every `<mark class="todo">` with real text (`grep -n 'class="todo"' articles/*/index.html` must return nothing).
-2. Remove the `draft-banner` paragraph and the `<meta name="robots" content="noindex">` tag.
-3. Set the real date in `<time datetime>` and `datePublished` in the JSON-LD.
-4. Add the URL to `sitemap.xml`.
-5. After it is live, paste the URL into LinkedIn's [Post Inspector](https://www.linkedin.com/post-inspector/) so the preview card is fresh.
+The draft banner, `noindex`, the article list and `sitemap.xml` are all handled by the builder.
 
 ## Updating images
 

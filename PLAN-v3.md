@@ -2,7 +2,7 @@
 
 **Goal:** turn the site into the bridge between Gericke-the-architect and Gericke-the-cyclist / chess player / Jimny explorer, with **full control over what is shown, to whom, and when**.
 
-Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh) are done. Life-card paper texture from §3.1 waits for the Life cards in Phase 3.
+Status: draft for review. Phase 0 (hygiene) and Phase 1 (visual refresh) are done. Phase 2 is in a test run: the C# builder renders Experience and Articles into `dist/` and CI builds it, but Pages still serves the repository root. Life-card paper texture from §3.1 waits for the Life cards in Phase 3.
 
 ---
 
@@ -117,7 +117,7 @@ All three options give build-time filtering. Pick based on how much you want to 
 - Downside: Ruby/Liquid, which is not your stack, and its logic is limited.
 
 ### Option B: a small C# static-site builder (recommended)
-A `.NET 9` console app in `/build` that you fully own:
+A `.NET 10` (LTS) console app in `/build` that you fully own:
 
 ```
 build/
@@ -125,7 +125,7 @@ build/
   Content/ContentLoader.cs      // reads content/*.json + markdown
   Content/IVisibilityRule.cs    // Specification pattern
     PublishedRule, NotDraftRule, ScheduledRule, LensRule
-  Rendering/RazorRenderer.cs    // RazorLight templates per component
+  Rendering/*.cs                // C# raw-string templates per component (compile-time checked; RazorLight optional later)
   Pipeline/IBuildStep.cs        // Pipeline / Chain of Responsibility
     LoadContent -> ApplyVisibility -> FetchIntegrations -> Render -> OptimiseImages -> Write
   Integrations/
@@ -169,7 +169,7 @@ The same builder, but deployed to **Azure Static Web Apps (Free tier)** instead 
 | Phase | Scope | Size |
 |---|---|---|
 | ~~**1. Visual refresh**~~ | Done: palette tokens, SVG icons (Lucide + Simple Icons brand icons), Space Grotesk / Inter, light mode with toggle, `styles.css` reorganised into `@layer`s. | Small–medium |
-| **2. Content as data** | Move content to `content/*.json` and build the C# site builder with visibility rules and tests. Deploy via GitHub Actions. | Medium |
+| **2. Content as data** | Test run done: `build/SiteBuilder` (.NET 10) with Specification-based visibility rules, a step pipeline, 41 tests and a CI workflow; Experience and Articles come from `content/`. Remaining: move the other sections to content, then deploy `dist/` with `actions/deploy-pages`. | Medium |
 | **3. The bridge** | Lens switch, Home "Now" card, Life page, merged Work page. | Medium |
 | **4. Integrations** | chess.com, Strava, Goodreads, Jimny trips, EXIF stripping. | Medium |
 | **5. Azure SWA** | Private repo, auth-protected friends lens (medical stays public), PR previews, Functions for Strava OAuth. | Medium |

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SiteBuilder</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Markdig" />
+    <PackageReference Include="YamlDotNet" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="SiteBuilder.Tests" />
+  </ItemGroup>
+</Project>
