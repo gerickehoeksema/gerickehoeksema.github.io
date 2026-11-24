@@ -57,9 +57,21 @@ After a few attempts, and more wasted time, I went back to the client and was ho
 
 The lesson: **strangle the system, rewrite the slice.** The Strangler Fig pattern protects you from rewriting everything at once. It doesn't oblige you to carry the old code's problems into the new service.
 
-## 4. Decide how services talk, deliberately
+## 4. My first mistake: going low-code
 
-The most important decision after the boundaries is the communication model. The rule of thumb we settled on:
+With the new application, my first instinct was to go for a low-code option. We were already on Azure, so I wanted to use **Azure Logic Apps**. Logic Apps really are great, and they're a great way to debug failures: every run records what happened at each step, so you can see exactly where something broke.
+
+The mistake was that I didn't take into account how big the payloads would actually be for certain parts of the application. My first iteration used a Logic App on the low-cost tier, and it couldn't handle the payload. <mark class="todo">[Which tier and which limit did you hit? E.g. Consumption plan, message size or timeout.]</mark> Making it work meant upgrading to a more expensive option.
+
+That ran straight into a cost trade-off we'd already been weighing. We knew from the start that microservices would push the monthly bill up: every service that owns its own database is another database to pay for. We accepted that because faster feature delivery and easier debugging would cut development costs. Those two costs were always balancing against each other, and paying for a bigger Logic App tier on top of the extra infrastructure tipped the balance the wrong way. At that time, the upgrade didn't make sense.
+
+The lesson: **size the payload before you pick the platform.** Low-code is a good fit for orchestration and glue, but check its limits against your real data first, and check what the next tier up costs before you depend on it.
+
+## 5. Decide how services talk, deliberately
+
+After dropping the Logic App, we went with a simpler shape. The front end has its own back end: an ASP.NET Core API with its own SQL database, accessed through an Entity Framework Core data layer. Initially, the front end talked to that API directly over HTTPS. <mark class="todo">[Is "its own back end" a Backend for Frontend (one API per front end)? If so, it's worth naming the pattern here.]</mark>
+
+<mark class="todo">[The rest of this section is from the earlier draft. Keep what matches what came next, e.g. if and when events were introduced.]</mark> The rule of thumb we settled on:
 
 - **Synchronous (HTTP) for queries**, when the caller genuinely needs an answer right now to continue.
 - **Asynchronous events for state changes.** "An order was placed" is published once, and any service that cares reacts in its own time. We used <mark class="todo">[Azure Service Bus / RabbitMQ / other]</mark>.
@@ -83,7 +95,7 @@ public async Task PlaceOrderAsync(PlaceOrder command, CancellationToken ct)
 
 The other half of the deal: **every consumer must be idempotent**. Message brokers deliver at least once, so handling the same event twice has to be harmless.
 
-## 5. Write the decisions down
+## 6. Write the decisions down
 
 Every significant choice (a boundary, a broker, a data-ownership rule) went into a short **Architecture Decision Record**: the context, the options, what we chose, and what it costs us. Months later, when someone asks "why on earth is it like this?", the answer is one link away. It also made design reviews faster, because people argued about the trade-offs on paper instead of from memory.
 
