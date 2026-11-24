@@ -31,9 +31,11 @@ Microservices weren't the first answer. Before changing the architecture, I trie
 
 **Fixing the memory leaks.** This was the obvious place to start, but in a legacy codebase of that size it turned into such a hassle that I had to abandon it. It simply wasn't feasible time-wise, while the client still needed new features delivered.
 
-**Optimising the database.** Next I went to the database layer: adding proper indexing and normalising some of the tables. It didn't solve the problem. The database layer hadn't been designed correctly in the first place, and that was the root of a lot of our issues. Tuning it couldn't fix that, and every new field or optimisation fought against the original design.
+**Optimising the database.** Next I went to the database layer: adding proper indexing and normalising some of the tables. It didn't solve the problem. The database layer hadn't been designed correctly in the first place, and that was the root of a lot of our issues. Tuning it couldn't fix that, and every new field or optimisation fought against the original design, so I abandoned reworking the database layer.
 
-None of these problems is a reason to adopt microservices on its own. But together, and after two honest attempts at fixing things in place, it was clear the architecture was slowing us down more than it was helping. So I started planning how the microservices pattern could fit our case, starting with the single point of failure.
+**Upgrading the Azure Functions.** That surfaced the next problem. Some applications used Azure Functions to interact with the database, and those functions ran on a model that was no longer supported, so they had to be upgraded. <mark class="todo">[Confirm the model, e.g. the in-process model moving to the isolated worker model, and the .NET versions involved.]</mark> But multiple functions shared the same codebase, so upgrading one meant upgrading all the others. Because they were so tightly coupled, every upgrade caused breaking changes somewhere else. After a lot of time spent there as well, it was clear I couldn't fix it without doing a full rewrite.
+
+None of these problems is a reason to adopt microservices on its own. But together, and after two attempts at fixing the database layer that didn't help at all, it was clear the architecture was slowing us down more than it was helping. So I started planning how the microservices pattern could fit our case, starting with the single point of failure.
 
 ## 1. Creating diagrams of potential microservices
 
