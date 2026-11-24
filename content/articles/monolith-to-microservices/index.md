@@ -57,8 +57,6 @@ After a few attempts, and more wasted time, I went back to the client and was ho
 
 The lesson: **strangle the system, rewrite the slice.** The Strangler Fig pattern protects you from rewriting everything at once. It doesn't oblige you to carry the old code's problems into the new service.
 
-Where a new service still had to talk to old code, we put an **anti-corruption layer** between them: a small translation boundary so the monolith's models and naming didn't leak into the new service. It feels like extra work at the time. It's the reason the new services still look clean today.
-
 ## 4. Decide how services talk, deliberately
 
 The most important decision after the boundaries is the communication model. The rule of thumb we settled on:
