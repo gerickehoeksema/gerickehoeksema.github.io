@@ -39,9 +39,9 @@ None of these problems is a reason to adopt microservices on its own. But togeth
 
 ## 1. A failing app becomes the first service
 
-After the attempts at fixing the legacy system, the client came with a new request: an existing application had to be fixed and extended in the same piece of work. Once again, the problem was the foundation. The application still integrated with the existing database, it was in a poor state, and it simply didn't work. It was also a mobile application, and its main process timed out after 30 minutes without ever completing.
+After the attempts at fixing the legacy system, the client came with a new request: an existing application had to be fixed and extended in the same piece of work. It was a legacy mobile app that talked to the legacy API, and once again the problem was the foundation underneath it. Through that API it still depended on the existing database, it was in a poor state, and it simply didn't work. Its main process timed out after 30 minutes without ever completing.
 
-Patching it would have meant another round of fighting the legacy code. Instead, I took the opportunity to start introducing microservices. This new application would be built properly, next to the legacy system, and become the foundation for our move to microservices.
+Instead of trying to fix the legacy app, I used the **Strangler Fig** pattern: leave the legacy app and API where they are, and build a new application next to them, designed as microservices from the start. That new application would replace the old one and become the foundation for our move to microservices.
 
 ## 2. Creating diagrams of potential microservices
 
@@ -49,7 +49,7 @@ To get a better understanding of how it would look, should we commit to microser
 
 ## 3. Strangle the monolith, but don't port the mess
 
-We never stopped the world for a big-bang rewrite of the whole system. We used the **Strangler Fig** pattern: put a routing layer in front of the monolith, build the new service next to it, then move traffic over one route at a time. The monolith shrank while the product kept shipping.
+We never stopped the world for a big-bang rewrite of the whole system. The Strangler Fig pattern lets you grow the new system around the old one: put a routing layer in front of the monolith, build the new service next to it, then move traffic over one route at a time. The monolith shrank while the product kept shipping.
 
 That doesn't mean the code inside the new service should be the old code moved over. My first approach was to scope the legacy code to find the business rules, copy the existing code across, and adapt it for microservices. It didn't work. The business rules themselves weren't implemented correctly. There were no clear boundaries and no clear design, and the code was tightly coupled to a lot of other functionality the process didn't need. From what I could tell, that was the cause of the timeout: the legacy service was basically calling itself multiple times to complete one process.
 
