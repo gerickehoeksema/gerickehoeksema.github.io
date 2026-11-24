@@ -12,14 +12,28 @@ keywords: [microservices, software architecture, .NET, Azure, monolith decomposi
 
 ## Where we started
 
-The product multiple web interfaces but a single ASP.NET Framework 4.8 API application with one shared database. It had grown for over many years and been through multiple dev houses, and it showed the usual symptoms:
+The product had multiple web applications, all integrating with a single ASP.NET Framework 4.8 API backed by one shared database. The API had grown over many years and passed through several dev houses, and it showed.
+
+The biggest problem was simple: **the API was a single point of failure.** Every web application depended on it, so when the API went down, every application stopped working with it.
+
+And it did go down. Design issues and memory leaks meant that the more traffic we got, the worse the API performed, until it shut down altogether. That happened at various times, and it hit hardest when the company was busiest: exactly when the system was needed most, it was most likely to fall over.
+
+Behind that sat the usual symptoms of a system that had outgrown its design:
 
 - **Every change shipped everything.** A small fix in one area meant redeploying the whole system, so releases got bigger and longer.
-- **The database layer.** Modules read and wrote each other's tables directly, so nobody could change a schema with confidence and ORM layer had no clear boundaries.
-- **Extendibility issues.** New features meant spending more hours on connecting layers than actually building it.
-- **Updating modules and packages.** 
+- **The database layer.** Modules read and wrote each other's tables directly, and the ORM layer had no clear boundaries, so nobody could change a schema with confidence. Even adding a new field was harder than it should have been.
+- **Extendibility issues.** New features meant spending more hours connecting layers than actually building the feature.
+- **Updating modules and packages.** <mark class="todo">[What made upgrades hard? E.g. outdated packages tied to .NET Framework, or one upgrade forcing changes across the whole API.]</mark>
 
-None of these is a reason to adopt microservices on its own. Together, they meant the architecture was now slowing the team down more than it was helping.
+## What we tried first
+
+Microservices weren't the first answer. Before changing the architecture, I tried to fix what we had.
+
+**Fixing the memory leaks.** This was the obvious place to start, but in a legacy codebase of that size it turned into such a hassle that I had to abandon it. It simply wasn't feasible time-wise, while the client still needed new features delivered.
+
+**Optimising the database.** Next I went to the database layer: adding proper indexing and normalising some of the tables. It didn't solve the problem. The database layer hadn't been designed correctly in the first place, and that was the root of a lot of our issues. Tuning it couldn't fix that, and every new field or optimisation fought against the original design.
+
+None of these problems is a reason to adopt microservices on its own. But together, and after two honest attempts at fixing things in place, it was clear the architecture was slowing us down more than it was helping. So I started planning how the microservices pattern could fit our case, starting with the single point of failure.
 
 ## 1. Creating diagrams of potential microservices
 
