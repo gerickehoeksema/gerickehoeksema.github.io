@@ -49,7 +49,7 @@ To get a better understanding of how it would look, should we commit to microser
 
 ## 3. Strangle the monolith, but don't port the mess
 
-We never stopped the world for a big-bang rewrite of the whole system. The Strangler Fig pattern lets you grow the new system around the old one: put a routing layer in front of the monolith, build the new service next to it, then move traffic over one route at a time. The monolith shrank while the product kept shipping.
+We never stopped the world for a big-bang rewrite of the whole system. The Strangler Fig pattern lets you grow the new system around the old one, and in our case that didn't need a routing layer or any clever traffic splitting. The application boundary did the work: the new application was built alongside the legacy app, the legacy app and API kept running untouched for everything else, and once the new application was ready it replaced the old one. One piece of functionality moved off the legacy API without the rest of the system having to change.
 
 That doesn't mean the code inside the new service should be the old code moved over. My first approach was to scope the legacy code to find the business rules, copy the existing code across, and adapt it for microservices. It didn't work. The business rules themselves weren't implemented correctly. There were no clear boundaries and no clear design, and the code was tightly coupled to a lot of other functionality the process didn't need. From what I could tell, that was the cause of the timeout: the legacy service was basically calling itself multiple times to complete one process.
 
