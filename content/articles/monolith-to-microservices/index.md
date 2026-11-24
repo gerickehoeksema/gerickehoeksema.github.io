@@ -71,31 +71,58 @@ The lesson: **size the payload before you pick the platform.** Low-code is a goo
 
 After dropping the Logic App, we went with a simpler shape. The front end has its own back end: an ASP.NET Core API with its own SQL database, accessed through an Entity Framework Core data layer. Initially, the front end talked to that API directly over HTTPS. <mark class="todo">[Is "its own back end" a Backend for Frontend (one API per front end)? If so, it's worth naming the pattern here.]</mark>
 
-<mark class="todo">[The rest of this section is from the earlier draft. Keep what matches what came next, e.g. if and when events were introduced.]</mark> The rule of thumb we settled on:
+## 6. Solving the timeout: accept, queue, process
 
-- **Synchronous (HTTP) for queries**, when the caller genuinely needs an answer right now to continue.
-- **Asynchronous events for state changes.** "An order was placed" is published once, and any service that cares reacts in its own time. We used <mark class="todo">[Azure Service Bus / RabbitMQ / other]</mark>.
+With the architecture up and running, it was time to tackle the problems the new application was built to solve. The big one was the legacy app's timeout: a long process with no responsiveness, which failed after 30 minutes without completing.
 
-Events bring a classic trap: you save to your database, then publish to the bus, and the process dies in between. The **transactional outbox** pattern fixes this by storing the event in the same database transaction as the state change, then publishing it from a background worker:
+The fix was to stop making the front end wait. I used the **transactional outbox** pattern together with .NET's built-in **channels** (`System.Threading.Channels`), so each request is handed to its own channel inside the API. <mark class="todo">[Confirm: one channel per request, or one channel per type of request?]</mark>
+
+The flow looks like this:
+
+1. **The front end posts the payload and doesn't wait.** It immediately gets a response saying the process has been queued.
+2. **The API stores the request in the outbox,** in the same database transaction, so it survives even if the process dies right after.
+3. **The request goes into a channel,** where a background worker picks it up and runs the business logic.
+4. **If processing fails, a retry service requeues it.** Nothing is lost, and nobody has to resubmit.
+
+A simplified version in C#:
 
 ```csharp
-public async Task PlaceOrderAsync(PlaceOrder command, CancellationToken ct)
+// The endpoint stores the request, queues it, and returns straight away.
+app.MapPost("/requests", async (ProcessRequest request, AppDbContext db,
+    Channel<Guid> queue, CancellationToken ct) =>
 {
-    var order = Order.Place(command.CustomerId, command.Lines);
-    _db.Orders.Add(order);
+    var message = OutboxMessage.From(request);
+    db.OutboxMessages.Add(message);
+    await db.SaveChangesAsync(ct);   // durable before we say "queued"
 
-    // Stored in the same transaction as the order itself,
-    // so the event exists if and only if the order does.
-    _db.OutboxMessages.Add(OutboxMessage.From(new OrderPlaced(order.Id, order.Total)));
+    await queue.Writer.WriteAsync(message.Id, ct);
+    return Results.Accepted($"/requests/{message.Id}", new { message.Id, Status = "Queued" });
+});
 
-    await _db.SaveChangesAsync(ct);
-    // A background worker reads the outbox and publishes to the bus.
+// A background worker reads the channel and runs the business logic.
+public sealed class RequestWorker(Channel<Guid> queue, IServiceScopeFactory scopes)
+    : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken ct)
+    {
+        await foreach (var id in queue.Reader.ReadAllAsync(ct))
+        {
+            using var scope = scopes.CreateScope();
+            var processor = scope.ServiceProvider.GetRequiredService<RequestProcessor>();
+
+            // Marks the outbox row as done, or as failed so the
+            // retry service can put it back on the channel.
+            await processor.ProcessAsync(id, ct);
+        }
+    }
 }
 ```
 
-The other half of the deal: **every consumer must be idempotent**. Message brokers deliver at least once, so handling the same event twice has to be harmless.
+The catch with retries: **processing must be idempotent.** If a request can be requeued, running it twice has to be harmless.
 
-## 6. Write the decisions down
+The result: a process that used to fail after 30 minutes now completes in **under 3 minutes, even for a massive payload.**
+
+## 7. Write the decisions down
 
 Every significant choice (a boundary, a broker, a data-ownership rule) went into a short **Architecture Decision Record**: the context, the options, what we chose, and what it costs us. Months later, when someone asks "why on earth is it like this?", the answer is one link away. It also made design reviews faster, because people argued about the trade-offs on paper instead of from memory.
 
