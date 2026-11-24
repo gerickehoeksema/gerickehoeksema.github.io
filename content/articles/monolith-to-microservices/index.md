@@ -142,7 +142,28 @@ Our services span multiple tech stacks (Node.js, React, C# and Blazor), and Azur
 
 Changes are tracked through the version numbers, so it's always clear which service runs which version of the shared behaviour. <mark class="todo">[Do you use semantic versioning? How do you handle a change that can't be backwards compatible?]</mark>
 
-## Beyond the timeout: the other drivers
+## 9. When a service goes down: no more lost data
+
+<mark class="todo">[First draft from a quick voice note. To be expanded.]</mark>
+
+After we went live with our microservices, there were areas that needed protection and weren't fully covered yet. That's normal: in an agile world you can't build everything to perfection and wait to deploy it all at once. So as issues cropped up, we dealt with them on the spot.
+
+The one that hurt: **one of our core APIs went down, and we lost data.**
+
+Our public-facing website sends data to that API. If the API was down, the website retried three to five times, then reported that the message had timed out, and then nothing happened. Whatever the user had submitted, such as a new lead, was simply gone.
+
+### NATS and JetStream
+
+I had already been using **NATS** as a message broker in one of my services for service-to-service calls, which is much faster than going over HTTP. But I wasn't fully aware of its capabilities. Digging deeper, I found **JetStream**, NATS's persistence layer, which can store messages in a stream until something is ready to process them.
+
+That gave us the fallback we were missing:
+
+1. **The client tries the API as normal,** with its usual retries.
+2. **If the API still can't be reached, the message is saved securely to a JetStream stream** instead of being dropped. I built this as a package, so every client that needs it gets the same behaviour. <mark class="todo">[Published to Azure Artifacts like the packages in section 8? How is the message secured, e.g. TLS, NATS credentials, encryption of the payload?]</mark>
+3. **Once the API is back up, a background service reads the stream** and processes the queued messages accordingly.
+
+The result: a service going down now means a delay, not lost data.
+
 
 Fixing one failing app was the trigger, but it wasn't the only reason to change the architecture. Working on the new application exposed several other problems with the legacy setup.
 
