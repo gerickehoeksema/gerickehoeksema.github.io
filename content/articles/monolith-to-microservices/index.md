@@ -126,6 +126,22 @@ The result: a process that used to fail after 30 minutes now completes in **unde
 
 Every significant choice (a boundary, a broker, a data-ownership rule) went into a short **Architecture Decision Record**: the context, the options, what we chose, and what it costs us. Months later, when someone asks "why on earth is it like this?", the answer is one link away. It also made design reviews faster, because people argued about the trade-offs on paper instead of from memory.
 
+## 8. Stop duplicating: versioned packages on Azure Artifacts
+
+<mark class="todo">[First draft from a quick voice note. To be expanded.]</mark>
+
+As the microservices grew, I constantly found myself duplicating certain business logic and behaviours across the different services. It became a real problem the moment a change was introduced: the same code had to be changed in every service that had a copy of it, which was unnecessary time spent on every change.
+
+The usual answer is a shared library, but a library that every service references directly couples them all together again: change it, and everything has to move at once. Since we were already on Azure, I went a different way and published the shared logic as **versioned packages on Azure Artifacts**.
+
+Our services span multiple tech stacks (Node.js, React, C# and Blazor), and Azure Artifacts handles both sides: **npm packages** for the JavaScript services and **NuGet packages** for the .NET ones. The packages are kept backwards compatible, which changes how a release works:
+
+1. **Make the change once,** in the package.
+2. **Publish a new version** to the feed.
+3. **Update only the services that need it.** Every other service stays on the version it already uses until it has a reason to move.
+
+Changes are tracked through the version numbers, so it's always clear which service runs which version of the shared behaviour. <mark class="todo">[Do you use semantic versioning? How do you handle a change that can't be backwards compatible?]</mark>
+
 ## Beyond the timeout: the other drivers
 
 Fixing one failing app was the trigger, but it wasn't the only reason to change the architecture. Working on the new application exposed several other problems with the legacy setup.
