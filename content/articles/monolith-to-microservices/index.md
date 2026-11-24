@@ -1,3 +1,15 @@
+---
+title: "Breaking up a monolith: what I'd keep, and what I'd do differently"
+description: "Lessons from leading a monolith-to-microservices migration: drawing service boundaries, choosing how services talk, and the things I'd change next time."
+lede: "I led the move from a monolith to independently deployable services. Here's how we drew the lines, how the services ended up talking to each other, and the things I'd change if I did it again tomorrow."
+kicker: Architecture
+icon: boxes
+date: 2026-12-01
+lens: [work]
+visibility: draft          # public | unlisted | draft
+keywords: [microservices, software architecture, .NET, Azure, monolith decomposition]
+---
+
 ## Where we started
 
 The product multiple web interfaces but a single ASP.NET Framework 4.8 API application with one shared database. It had grown for over many years and been through multiple dev houses, and it showed the usual symptoms:
