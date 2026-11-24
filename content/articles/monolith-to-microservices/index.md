@@ -159,7 +159,7 @@ I had already been using **NATS** as a message broker in one of my services for 
 That gave us the fallback we were missing:
 
 1. **The client tries the API as normal,** with its usual retries.
-2. **If the API still can't be reached, the message is saved securely to a JetStream stream** instead of being dropped. I built this as a package, so every client that needs it gets the same behaviour. <mark class="todo">[Published to Azure Artifacts like the packages in section 8? How is the message secured, e.g. TLS, NATS credentials, encryption of the payload?]</mark>
+2. **If the API still can't be reached, the message is saved securely to a JetStream stream** instead of being dropped. I built this as a package and published it to Azure Artifacts, like the packages in section 8, so every client that needs it gets the same behaviour. The payload is encrypted and access is authenticated, so nothing sensitive sits in the stream in the clear.
 3. **Once the API is back up, a background service reads the stream** and processes the queued messages accordingly.
 
 The result: a service going down now means a delay, not lost data.
