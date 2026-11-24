@@ -128,6 +128,13 @@ Every significant choice (a boundary, a broker, a data-ownership rule) went into
 
 ## What went well
 
+- **A solid foundation, built for extension.** Because this was our first microservice, we could focus from day one on design patterns that make the system easy to extend, and stay true to SOLID principles instead of fighting years of legacy decisions. <mark class="todo">[Name one or two patterns you used, e.g. on the API or the front end.]</mark>
+- **Room to experiment.** Starting fresh meant we could try out design patterns properly, even on the front end. It was genuinely fun, which isn't something I'd have said about working on the legacy API.
+- **New features are simpler, even today.** Extending the application or introducing new features is nowhere near as complicated as it used to be.
+- **A timeout turned into minutes.** The process that failed after 30 minutes on the legacy app now completes in under 3 minutes, even for a massive payload.
+
+<mark class="todo">[The bullets below are from the earlier draft. Keep the ones that are true for you.]</mark>
+
 - **Independent releases.** <mark class="todo">[A before/after: release frequency, lead time, or simply "a fix in X no longer waits for Y".]</mark>
 - **Clearer ownership.** Each service has a team that knows it, and code reviews got sharper because the scope was smaller.
 - **Safer change.** Owning its data means a service can change its schema without a cross-team meeting.
