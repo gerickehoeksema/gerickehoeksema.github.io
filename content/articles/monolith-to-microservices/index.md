@@ -37,17 +37,29 @@ Microservices weren't the first answer. Before changing the architecture, I trie
 
 None of these problems is a reason to adopt microservices on its own. But together, and after two attempts at fixing the database layer that didn't help at all, it was clear the architecture was slowing us down more than it was helping. So I started planning how the microservices pattern could fit our case, starting with the single point of failure.
 
-## 1. Creating diagrams of potential microservices
+## 1. A failing app becomes the first service
 
-To get a better understanding how it will look, should we commit to microservices, I wanted a visual diagram. So I created it with PlantUML with C4 modeling. This was done over time as new problems appear while maintaining legacy code
+After the attempts at fixing the legacy system, the client came with a new request: an existing application had to be fixed and extended in the same piece of work. Once again, the problem was the foundation. The application still integrated with the existing database, it was in a poor state, and it simply didn't work. It was also a mobile application, and its main process timed out after 30 minutes without ever completing.
 
-## 2. Strangle the monolith, don't rewrite it
+Patching it would have meant another round of fighting the legacy code. Instead, I took the opportunity to start introducing microservices. This new application would be built properly, next to the legacy system, and become the foundation for our move to microservices.
 
-We never stopped the world for a rewrite. We used the **Strangler Fig** pattern: put a routing layer in front of the monolith, build the new service next to it, then move traffic over one route at a time. The monolith shrank while the product kept shipping.
+## 2. Creating diagrams of potential microservices
+
+To get a better understanding of how it would look, should we commit to microservices, I wanted a visual diagram. So I created one with PlantUML, using the C4 model. This happened over time, as new problems appeared while maintaining the legacy code, and those diagrams turned out to be useful for far more than planning, as you'll see in the next section.
+
+## 3. Strangle the monolith, but don't port the mess
+
+We never stopped the world for a big-bang rewrite of the whole system. We used the **Strangler Fig** pattern: put a routing layer in front of the monolith, build the new service next to it, then move traffic over one route at a time. The monolith shrank while the product kept shipping.
+
+That doesn't mean the code inside the new service should be the old code moved over. My first approach was to scope the legacy code to find the business rules, copy the existing code across, and adapt it for microservices. It didn't work. The business rules themselves weren't implemented correctly. There were no clear boundaries and no clear design, and the code was tightly coupled to a lot of other functionality the process didn't need. From what I could tell, that was the cause of the timeout: the legacy service was basically calling itself multiple times to complete one process.
+
+After a few attempts, and more wasted time, I went back to the client and was honest: this is a big mess. I presented my findings using the diagrams, then stepped back and recommended a rewrite of this part of the system. We would gather the business rules, gather the new features that were going to be introduced, and build it cleanly. It would be faster to rewrite than to copy the existing code and try to fix it.
+
+The lesson: **strangle the system, rewrite the slice.** The Strangler Fig pattern protects you from rewriting everything at once. It doesn't oblige you to carry the old code's problems into the new service.
 
 Where a new service still had to talk to old code, we put an **anti-corruption layer** between them: a small translation boundary so the monolith's models and naming didn't leak into the new service. It feels like extra work at the time. It's the reason the new services still look clean today.
 
-## 3. Decide how services talk, deliberately
+## 4. Decide how services talk, deliberately
 
 The most important decision after the boundaries is the communication model. The rule of thumb we settled on:
 
@@ -73,7 +85,7 @@ public async Task PlaceOrderAsync(PlaceOrder command, CancellationToken ct)
 
 The other half of the deal: **every consumer must be idempotent**. Message brokers deliver at least once, so handling the same event twice has to be harmless.
 
-## 4. Write the decisions down
+## 5. Write the decisions down
 
 Every significant choice (a boundary, a broker, a data-ownership rule) went into a short **Architecture Decision Record**: the context, the options, what we chose, and what it costs us. Months later, when someone asks "why on earth is it like this?", the answer is one link away. It also made design reviews faster, because people argued about the trade-offs on paper instead of from memory.
 
