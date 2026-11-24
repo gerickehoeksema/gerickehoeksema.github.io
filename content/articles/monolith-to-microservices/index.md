@@ -126,6 +126,26 @@ The result: a process that used to fail after 30 minutes now completes in **unde
 
 Every significant choice (a boundary, a broker, a data-ownership rule) went into a short **Architecture Decision Record**: the context, the options, what we chose, and what it costs us. Months later, when someone asks "why on earth is it like this?", the answer is one link away. It also made design reviews faster, because people argued about the trade-offs on paper instead of from memory.
 
+## Beyond the timeout: the other drivers
+
+Fixing one failing app was the trigger, but it wasn't the only reason to change the architecture. Working on the new application exposed several other problems with the legacy setup.
+
+### Security risks
+
+The first security risk surfaced quickly. The legacy endpoint the new application needed was open, and because the application had to integrate with third-party applications, that open endpoint exposed a lot of sensitive information. Securing it couldn't be done from one side only: the endpoint had to be secured from the front-end perspective and from the back-end perspective. <mark class="todo">[How did you secure each side? E.g. authentication on the front end, Entra ID / OAuth tokens, API keys or scopes for third parties, Azure API Management, private endpoints.]</mark>
+
+### Infrastructure cost vs development cost
+
+<mark class="todo">[Your note to come. Section 4's Logic App story is one example of this trade-off.]</mark>
+
+### Fast turnaround
+
+<mark class="todo">[Your note to come.]</mark>
+
+### New developer onboarding
+
+<mark class="todo">[Your note to come.]</mark>
+
 ## What went well
 
 - **A solid foundation, built for extension.** Because this was our first microservice, we could focus from day one on design patterns that make the system easy to extend, and stay true to SOLID principles instead of fighting years of legacy decisions. <mark class="todo">[Name one or two patterns you used, e.g. on the API or the front end.]</mark>
