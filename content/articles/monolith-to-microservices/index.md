@@ -67,7 +67,7 @@ That ran straight into a cost trade-off we'd already been weighing. We knew from
 
 The lesson: **size the payload before you pick the platform.** Low-code is a good fit for orchestration and glue, but check its limits against your real data first, and check what the next tier up costs before you depend on it.
 
-## 5. Decide how services talk, deliberately
+## 5. A simpler architecture
 
 After dropping the Logic App, we went with a simpler shape. The front end has its own back end: an ASP.NET Core API with its own SQL database, accessed through an Entity Framework Core data layer. Initially, the front end talked to that API directly over HTTPS. <mark class="todo">[Is "its own back end" a Backend for Frontend (one API per front end)? If so, it's worth naming the pattern here.]</mark>
 
@@ -75,16 +75,16 @@ After dropping the Logic App, we went with a simpler shape. The front end has it
 
 With the architecture up and running, it was time to tackle the problems the new application was built to solve. The big one was the legacy app's timeout: a long process with no responsiveness, which failed after 30 minutes without completing.
 
-The fix was to stop making the front end wait. I used the **transactional outbox** pattern together with .NET's built-in **channels** (`System.Threading.Channels`), so each request is handed to its own channel inside the API. <mark class="todo">[Confirm: one channel per request, or one channel per type of request?]</mark>
+The fix was to stop making the front end wait. I used the **transactional outbox** pattern together with .NET's built-in **channels** (`System.Threading.Channels`), with one channel per request type inside the API. Each type of work gets its own queue and its own worker, so a flood of one kind of request doesn't hold up the others.
 
 The flow looks like this:
 
 1. **The front end posts the payload and doesn't wait.** It immediately gets a response saying the process has been queued.
 2. **The API stores the request in the outbox,** in the same database transaction, so it survives even if the process dies right after.
-3. **The request goes into a channel,** where a background worker picks it up and runs the business logic.
+3. **The request goes into the channel for its type,** where a background worker picks it up and runs the business logic.
 4. **If processing fails, a retry service requeues it.** Nothing is lost, and nobody has to resubmit.
 
-A simplified version in C#:
+A simplified version in C#, showing one request type:
 
 ```csharp
 // The endpoint stores the request, queues it, and returns straight away.
