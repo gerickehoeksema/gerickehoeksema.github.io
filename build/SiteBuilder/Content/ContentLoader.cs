@@ -127,7 +127,8 @@ public sealed class ContentLoader
             Visibility = fm.Visibility is null ? Visibility.Public : ParseEnum<Visibility>(fm.Visibility, path),
             PublishFrom = fm.PublishFrom is null ? null : ParseDate(fm.PublishFrom, path),
             Featured = fm.Featured ?? false,
-            BodyHtml = document.ToHtml(Markdown),
+            // Code blocks scroll sideways on narrow screens; tabindex lets keyboard users focus and scroll them.
+            BodyHtml = document.ToHtml(Markdown).Replace("<pre>", "<pre tabindex=\"0\">", StringComparison.Ordinal),
             WordCount = CountWords(Markdig.Markdown.ToPlainText(markdown, Markdown)),
             SourceDirectory = Path.GetDirectoryName(path)!,
         };

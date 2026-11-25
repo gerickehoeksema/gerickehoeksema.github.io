@@ -71,9 +71,11 @@ internal static class ProfileSections
         var cssClass = link.Primary ? "btn btn-primary"
             : link.Brand is null ? "btn btn-social"
             : $"btn btn-social brand-{link.Brand}";
-        var target = Links.OpensInNewTab(link.Url) ? """ target="_blank" rel="noopener noreferrer" """.TrimEnd() : "";
+        var newTab = Links.OpensInNewTab(link.Url);
+        var target = newTab ? """ target="_blank" rel="noopener noreferrer" """.TrimEnd() : "";
+        var note = newTab ? NewTabNote() : "";
 
-        return $"""<a href="{E(Links.Href(link.Url))}"{target} class="{E(cssClass)}">{Icon(link.Icon)}{E(link.Label)}</a>""";
+        return $"""<a href="{E(Links.Href(link.Url))}"{target} class="{E(cssClass)}">{Icon(link.Icon)}{E(link.Label)}{note}</a>""";
     }
 
     public static string Skills(IEnumerable<Skill> skills) => string.Join("\n", skills.Select(skill => $"""

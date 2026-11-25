@@ -22,9 +22,10 @@ public class CertificationsAndProjectsTests
 
         var html = site.Read("index.html");
         Assert.Contains("href=\"certifications/Programming%20in%20C%23.pdf\"", html);
-        Assert.Contains("<p>Microsoft · View certificate</p>", html);
+        Assert.Contains("<h3>Programming in C#</h3>", html);
+        Assert.Contains("<p>Microsoft · View certificate<span class=\"visually-hidden\"> (PDF, opens in a new tab)</span></p>", html);
         Assert.Contains("href=\"https://example.com/verify/1\"", html);
-        Assert.Contains("<p>Acme · Verify</p>", html);
+        Assert.Contains("<p>Acme · Verify<span class=\"visually-hidden\"> (opens in a new tab)</span></p>", html);
         Assert.True(html.IndexOf("Programming in C#", StringComparison.Ordinal) < html.IndexOf("Verified online", StringComparison.Ordinal));
         Assert.DoesNotContain("fallback certifications", html);
     }
@@ -79,6 +80,7 @@ public class CertificationsAndProjectsTests
         Assert.Contains("<div class=\"tile-icon\">", html);
         Assert.Contains("#i-code", html);
         Assert.Contains("Visit project", html);
+        Assert.Contains("<span class=\"visually-hidden\"> (opens in a new tab)</span>", html);
     }
 
     [Fact]
@@ -102,4 +104,11 @@ public class CertificationsAndProjectsTests
     [InlineData("mailto:me@example.com", "mailto:me@example.com")]
     public void Links_encode_local_paths_only(string link, string expected) =>
         Assert.Equal(expected, Links.Href(link));
+
+    [Theory]
+    [InlineData("certifications/Programming in C#.pdf", "PDF")]
+    [InlineData("https://example.com/cert.PDF?download=1", "PDF")]
+    [InlineData("https://example.com/verify/1", null)]
+    public void Links_say_when_they_point_at_a_pdf(string link, string? expected) =>
+        Assert.Equal(expected, Links.Kind(link));
 }

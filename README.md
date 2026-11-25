@@ -345,6 +345,18 @@ The QR stickers on the bikes and helmets point to this page, so treat its URL as
 - **This repository is public**, so the page source (and its git history) can be read on GitHub.
 - Update the contents in `medical/index.html` only. `medical.html` is just a redirect.
 
+## Accessibility
+
+The site is built to work with screen readers (NVDA, JAWS, VoiceOver, TalkBack), keyboard-only use and zoom, and is checked against WCAG 2.1 AA with [axe](https://github.com/dequelabs/axe-core). Keep these in place when editing:
+
+- **Page switches are announced.** Each `<section class="page">` has an `aria-label` and its own `<h1>` (visually hidden on all pages but Home). `script.js` moves focus to that heading, sets the tab title (e.g. "Projects · Gericke Hoeksema") and announces the page in the `#page-status` live region. A new page needs the same three things.
+- **New-tab links say so.** External links end with `<span class="visually-hidden"> (opens in a new tab)</span>`, plus "PDF" for PDFs. The builder adds this itself (`Html.NewTabNote`); add it by hand to links written in `index.html`.
+- **Headings don't skip levels**: `h1` page → `h2` card → `h3` item.
+- **Icons are decorative** (`aria-hidden="true"`), always next to visible text. An icon-only button needs an `aria-label`.
+- **Emoji in headings** (medical page) are wrapped in `<span aria-hidden="true">`, so "📞 Emergency Contacts" is read as "Emergency Contacts".
+- **Colour contrast** of text is at least 4.5:1 in both themes. Check a new colour against `--surface-inset` and `--surface-hover`, which are the darkest light-theme surfaces.
+- Images need `alt` text (or `role="img"` + `aria-label` for CSS backgrounds); diagrams in articles need `role="img"` and a `<title>`.
+
 ## Icons
 
 `index.html` has one inline SVG sprite at the top of `<body>` (article pages have their own small sprite in `build/SiteBuilder/Rendering/ArticlePage.cs`). Use an icon with:

@@ -136,8 +136,8 @@ internal static class ArticlePage
                         <footer class="article-footer">
                             <p class="article-share-label">Share this article</p>
                             <div class="article-share">
-                                <a class="btn btn-social brand-linkedin" href="{{E(shareUrl)}}" target="_blank" rel="noopener noreferrer">{{Icon("linkedin")}}Share on LinkedIn</a>
-                                <button type="button" class="btn" data-copy-link>{{Icon("link")}}<span>Copy link</span></button>
+                                <a class="btn btn-social brand-linkedin" href="{{E(shareUrl)}}" target="_blank" rel="noopener noreferrer">{{Icon("linkedin")}}Share on LinkedIn{{NewTabNote()}}</a>
+                                <button type="button" class="btn" data-copy-link>{{Icon("link")}}<span aria-live="polite">Copy link</span></button>
                             </div>
                         </footer>
                     </article>
@@ -146,11 +146,11 @@ internal static class ArticlePage
                 <footer class="footer">
                     <div class="footer-content">
                         <p>&copy; {{options.Today.Year}} Gericke Hoeksema. All rights reserved.</p>
-                        <div class="footer-links">
+                        <nav class="footer-links" aria-label="Footer">
                             <a href="/#home">Home</a>
                             <a href="/#about">About Me</a>
                             <a href="/#blog">Articles</a>
-                        </div>
+                        </nav>
                     </div>
                 </footer>
 

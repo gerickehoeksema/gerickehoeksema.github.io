@@ -80,8 +80,8 @@ public class ProfileAndSectionsTests
 
         var html = site.Read("index.html");
         Assert.Contains("<a href=\"https://mail.example.com/?a=1&amp;b=2\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"btn btn-primary\">", html);
-        Assert.Contains("class=\"btn btn-social brand-linkedin\"><svg class=\"icon\" aria-hidden=\"true\"><use href=\"#i-linkedin\"/></svg>LinkedIn</a>", html);
-        Assert.Contains("<a href=\"#\" class=\"btn btn-social brand-goodreads\">", html);
+        Assert.Contains("class=\"btn btn-social brand-linkedin\"><svg class=\"icon\" aria-hidden=\"true\"><use href=\"#i-linkedin\"/></svg>LinkedIn<span class=\"visually-hidden\"> (opens in a new tab)</span></a>", html);
+        Assert.Contains("<a href=\"#\" class=\"btn btn-social brand-goodreads\"><svg class=\"icon\" aria-hidden=\"true\"><use href=\"#i-goodreads\"/></svg>Goodreads</a>", html);
         Assert.DoesNotContain("Secret", html);
     }
 
