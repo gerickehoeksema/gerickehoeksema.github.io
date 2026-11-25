@@ -8,11 +8,37 @@ document.addEventListener('DOMContentLoaded', () => {
     if (pages.length === 0) return; // standalone pages (articles) have no hash sections
 
     const isPage = (hash) => Boolean(hash) && hash !== '#' && document.querySelector(`.page${hash}`) !== null;
+    const baseTitle = document.title;
+    const status = document.getElementById('page-status');
+
+    // Screen readers don't notice a hash page switch on their own. Give the new page its own
+    // tab title, move focus to its first heading (so reading starts there), and announce it.
+    function announce(target) {
+        const page = document.querySelector(`.page${target}`);
+        const name = page.getAttribute('aria-label') || '';
+        document.title = target === DEFAULT_PAGE || !name ? baseTitle : `${name} · ${baseTitle}`;
+
+        const heading = page.querySelector('h1, h2');
+        if (heading) {
+            heading.setAttribute('tabindex', '-1');
+            heading.focus({ preventScroll: true });
+        }
+        if (status) {
+            status.textContent = '';
+            // A fresh text node after a tick, so the same page announced twice is still read.
+            setTimeout(() => { status.textContent = `${name} page`; }, 50);
+        }
+    }
 
     function render(hash) {
         const target = isPage(hash) ? hash : DEFAULT_PAGE;
 
-        pages.forEach((page) => page.classList.toggle('active', `#${page.id}` === target));
+        pages.forEach((page) => {
+            const active = `#${page.id}` === target;
+            page.classList.toggle('active', active);
+            // Belt and braces: inactive pages are display:none, but hide them from assistive tech explicitly too.
+            if (active) page.removeAttribute('aria-hidden'); else page.setAttribute('aria-hidden', 'true');
+        });
 
         navLinks.forEach((link) => {
             const active = link.getAttribute('href') === target;
@@ -39,16 +65,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (hash !== window.location.hash) {
             history.pushState(null, '', hash);
         }
-        render(hash);
+        const target = render(hash);
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+        announce(target);
     });
 
     // Back / Forward: re-render only, never push a new entry.
-    window.addEventListener('popstate', () => render(window.location.hash));
+    window.addEventListener('popstate', () => {
+        const target = render(window.location.hash);
+        window.scrollTo({ top: 0 });
+        announce(target);
+    });
 
-    // First load: normalise the URL without adding a history entry.
+    // First load: normalise the URL without adding a history entry. Focus is left alone,
+    // so the page reads from the top, but a deep link (/#projects) still gets its own title.
     const initial = render(window.location.hash);
+    const initialName = document.querySelector(`.page${initial}`).getAttribute('aria-label');
+    if (initial !== DEFAULT_PAGE && initialName) document.title = `${initialName} · ${baseTitle}`;
     if (window.location.hash && window.location.hash !== initial) {
         history.replaceState(null, '', initial);
     }

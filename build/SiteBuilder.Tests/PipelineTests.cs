@@ -34,6 +34,29 @@ public class PipelineTests
     }
 
     [Fact]
+    public void Article_pages_tell_screen_readers_about_new_tabs_and_copy_results()
+    {
+        using var site = new TestSite().WithArticle("live", TestSite.FrontMatter("Live one"));
+
+        site.Build();
+
+        var page = site.Read("articles", "live", "index.html");
+        Assert.Contains("Share on LinkedIn<span class=\"visually-hidden\"> (opens in a new tab)</span></a>", page);
+        Assert.Contains("<span aria-live=\"polite\">Copy link</span>", page);
+        Assert.Contains("<nav class=\"footer-links\" aria-label=\"Footer\">", page);
+    }
+
+    [Fact]
+    public void Code_blocks_in_articles_can_be_reached_with_the_keyboard()
+    {
+        using var site = new TestSite().WithArticle("code", TestSite.FrontMatter("Code"), "```csharp\nvar x = 1;\n```");
+
+        site.Build();
+
+        Assert.Contains("<pre tabindex=\"0\"><code class=\"language-csharp\">", site.Read("articles", "code", "index.html"));
+    }
+
+    [Fact]
     public void An_unlisted_article_is_reachable_but_not_listed()
     {
         using var site = new TestSite().WithArticle("hidden", TestSite.FrontMatter("Hidden one", "unlisted"));

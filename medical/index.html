@@ -61,7 +61,7 @@
 
         .last-updated {
             margin-bottom: 10px;
-            color: #64748b;
+            color: #94a3b8;
             font-size: 0.875rem;
         }
 
@@ -140,7 +140,7 @@
             border: 2px solid #3b82f6;
             border-radius: 8px;
             background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
+            color: #60a5fa;
             font-weight: 600;
             text-decoration: none;
             transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
@@ -180,13 +180,13 @@
 <body>
     <main class="medical-container">
         <header class="medical-header">
-            <div class="emergency-badge">⚕️ EMERGENCY MEDICAL INFORMATION</div>
+            <p class="emergency-badge"><span aria-hidden="true">⚕️</span> EMERGENCY MEDICAL INFORMATION</p>
             <h1>Medical Profile</h1>
             <p class="last-updated"><strong>Last Updated:</strong> January 2026</p>
         </header>
 
         <section class="medical-section">
-            <h2>📋 Personal Information</h2>
+            <h2><span aria-hidden="true">📋</span> Personal Information</h2>
             <ul>
                 <li><strong>Name:</strong> Gericke Hoeksema</li>
                 <li><strong>Date of Birth:</strong> 1988/08/20</li>
@@ -195,7 +195,7 @@
         </section>
 
         <section class="medical-section">
-            <h2>📞 Emergency Contacts</h2>
+            <h2><span aria-hidden="true">📞</span> Emergency Contacts</h2>
             <ul>
                 <li><strong>Primary Contact:</strong> Natanye Hoeksema - <a href="tel:+27846408549">084 640 8549</a></li>
                 <li><strong>Relationship:</strong> Sibling</li>
@@ -204,7 +204,7 @@
         </section>
 
         <!-- <section class="medical-section">
-            <h2>💊 Current Medications</h2>
+            <h2><span aria-hidden="true">💊</span> Current Medications</h2>
             <ul>
                 <li><strong>[Medication Name]</strong> - [Dosage] - [Frequency]</li>
                 <li><em>None currently</em> (if applicable)</li>
@@ -212,21 +212,21 @@
         </section> -->
 
         <section class="medical-section">
-            <h2>⚠️ Allergies &amp; Reactions</h2>
+            <h2><span aria-hidden="true">⚠️</span> Allergies &amp; Reactions</h2>
             <ul>
                 <li><strong>Bee sting</strong> - Mild</li>
             </ul>
         </section>
 
         <section class="medical-section">
-            <h2>🏥 Medical Conditions</h2>
+            <h2><span aria-hidden="true">🏥</span> Medical Conditions</h2>
             <ul>
                 <li><strong>Asthma</strong></li>
             </ul>
         </section>
 
         <section class="medical-section">
-            <h2>🚑 Emergency Info</h2>
+            <h2><span aria-hidden="true">🚑</span> Emergency Info</h2>
             <ul>
                 <li><strong>Medical Aid:</strong> Bonitas</li>
                 <li><strong>Membership Number:</strong> 24003996496</li>
@@ -234,13 +234,13 @@
         </section>
 
         <aside class="important-note">
-            <strong>⚠️ Important for Emergency Responders:</strong><br>
+            <strong><span aria-hidden="true">⚠️</span> Important for Emergency Responders:</strong><br>
             This information is provided to assist emergency medical personnel. In case of emergency,
             please contact emergency services immediately at your local emergency number.
         </aside>
 
-        <nav class="back-link">
-            <a href="/">← Back to Profile</a>
+        <nav class="back-link" aria-label="Back">
+            <a href="/"><span aria-hidden="true">←</span> Back to Profile</a>
         </nav>
     </main>
 </body>

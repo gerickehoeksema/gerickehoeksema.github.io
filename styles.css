@@ -68,7 +68,7 @@
         --text-3: light-dark(#5f6873, #8592a3);
 
         /* Accents: tuned per scheme so they stay legible as text */
-        --accent: light-dark(#a3590a, var(--amber));
+        --accent: light-dark(#96520a, var(--amber));   /* light: 4.7:1 or better on every light surface */
         --accent-soft: light-dark(rgb(242 165 65 / 0.18), rgb(242 165 65 / 0.12));
         --link: light-dark(#2a6aa6, #6fa8dc);
         --leaf: light-dark(var(--pine), #7fb38a);
@@ -129,8 +129,21 @@
         border-radius: 4px;
     }
 
-    main:focus {
+    main:focus,
+    .page [tabindex="-1"]:focus {
         outline: none;
+    }
+
+    /* Windows High Contrast / forced colours: keep focus rings and tile edges visible. */
+    @media (forced-colors: active) {
+        a:focus-visible,
+        button:focus-visible {
+            outline-color: Highlight;
+        }
+
+        .nav-link.active {
+            border-bottom-color: Highlight;
+        }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -651,7 +664,7 @@
         padding: 1.125rem 1.25rem;
     }
 
-    .cert-info h4 {
+    .cert-info h3 {
         font-size: 1.0625rem;
         font-weight: 600;
         margin-bottom: 0.125rem;
@@ -1089,12 +1102,17 @@
 
 /* -------------------------------------------------------------- utilities */
 @layer utilities {
+    /* Read by screen readers, never shown. */
     .visually-hidden {
         position: absolute;
         width: 1px;
         height: 1px;
+        margin: -1px;
+        padding: 0;
+        border: 0;
         overflow: hidden;
         clip: rect(0 0 0 0);
+        clip-path: inset(50%);
         white-space: nowrap;
     }
 }

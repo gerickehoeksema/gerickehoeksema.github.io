@@ -36,6 +36,13 @@ internal static class Html
     public static string Icon(string id, string? extraClass = null) =>
         $"""<svg class="icon{(extraClass is null ? "" : " " + extraClass)}" aria-hidden="true"><use href="#i-{E(id)}"/></svg>""";
 
+    /// <summary>
+    /// Text only screen readers hear, telling the visitor a link opens a new tab (WCAG 3.2.5).
+    /// <paramref name="kind"/> adds what the link points at, e.g. "PDF".
+    /// </summary>
+    public static string NewTabNote(string? kind = null) =>
+        $"""<span class="visually-hidden"> ({(kind is null ? "" : kind + ", ")}opens in a new tab)</span>""";
+
     /// <summary>Prefix every non-empty line with <paramref name="indent"/>.</summary>
     public static string Indent(string text, string indent) =>
         string.Join('\n', text.ReplaceLineEndings("\n").Split('\n').Select(l => l.Length == 0 ? l : indent + l));
@@ -90,4 +97,12 @@ internal static class Links
 
     /// <summary>External links open in a new tab; in-page and site links don't.</summary>
     public static bool OpensInNewTab(string link) => !IsLocal(link);
+
+    /// <summary>"PDF" for a link to a .pdf file, so screen readers can say what opens; otherwise null.</summary>
+    public static string? Kind(string link)
+    {
+        // A local file name can contain '#' ("Programming in C#.pdf"); only URLs have a query or fragment.
+        var path = Uri.TryCreate(link, UriKind.Absolute, out var uri) ? uri.AbsolutePath : link;
+        return path.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase) ? "PDF" : null;
+    }
 }

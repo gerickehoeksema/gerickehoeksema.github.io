@@ -39,8 +39,8 @@ internal static class HomeSections
         <a class="cert-item" href="{E(Links.Href(item.Link))}" target="_blank" rel="noopener noreferrer">
             <div class="tile-icon">{Icon("award")}</div>
             <div class="cert-info">
-                <h4>{E(item.Title)}</h4>
-                <p>{E(item.Issuer)} · {E(item.LinkText)}</p>
+                <h3>{E(item.Title)}</h3>
+                <p>{E(item.Issuer)} · {E(item.LinkText)}{NewTabNote(Links.Kind(item.Link))}</p>
             </div>
         </a>
         """;
@@ -58,7 +58,7 @@ internal static class HomeSections
                 <div class="project-info">
                     <h3>{E(item.Title)}</h3>
                     <p>{E(item.Description)}</p>
-                    <span class="project-link">{E(item.LinkText)} {Icon("arrow-up-right")}</span>
+                    <span class="project-link">{E(item.LinkText)} {Icon("arrow-up-right")}{NewTabNote()}</span>
                 </div>
             </a>
             """;
